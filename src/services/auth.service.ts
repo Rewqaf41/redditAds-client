@@ -19,6 +19,8 @@ class AuthService {
 			data
 		)
 
+		console.log(response)
+
 		if (response.data.accessToken) saveTokenStorage(response.data.accessToken)
 		if (response.data.id) localStorage.setItem('userId', response.data.id)
 
