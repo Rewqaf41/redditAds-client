@@ -10,7 +10,7 @@ export const getAccessToken = () => {
 export const saveTokenStorage = (accessToken: string) => {
 	console.log(accessToken)
 	Cookies.set(EnumTokens.ACCESS_TOKEN, accessToken, {
-		domain: 'decomate.ru',
+		domain: 'https://redditads.netlify.app',
 		sameSite: 'strict',
 		expires: 1,
 	})
