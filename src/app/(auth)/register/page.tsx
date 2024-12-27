@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
 	return (
-		<div className='min-h-screen flex items-center justify-center'>
+		<div className='min-h-screen flex items-center justify-center bg-neutral-950'>
 			<div className='bg-neutral-900 p-8 rounded-lg shadow-md'>
 				<h2 className='font-semibold mb-4'>Sign up</h2>
 				<AuthForm isLogin={false} />
