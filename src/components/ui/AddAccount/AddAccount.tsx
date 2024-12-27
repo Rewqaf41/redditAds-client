@@ -1,10 +1,9 @@
 "use client"
-import redditAccountService from "@/services/redditAccount.service"
+import RedditAccount from "@/services/redditAccount.service"
 import { IFormRedditAccount } from "@/types/auth.types"
-import { useMutation } from "@tanstack/react-query"
+import { useRouter, useSearchParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import toast from "react-hot-toast"
 import { IoMdClose } from "react-icons/io"
 import styles from "./AddAccount.module.scss"
 
@@ -16,23 +15,23 @@ interface WindowComponentProps {
 const AddAccount: React.FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 	const [showWindow, setShowWindow] = useState(false)
 	const { register, handleSubmit, reset } = useForm<IFormRedditAccount>()
+	const router = useRouter()
+	const username: string = localStorage.getItem("username") || ""
+	const searchParams = useSearchParams()
 
-	const { mutate: mutateAddAccount } = useMutation({
-		mutationKey: ["addAccount"],
-		mutationFn: (data: IFormRedditAccount) =>
-			redditAccountService.addAccount(data),
-		onError() {
-			toast.error("Something went wrong")
-		},
-		onSuccess() {
-			reset()
-			onClose()
-			toast.success("Account added successfully")
-		},
-	})
+	useEffect(() => {
+		const code = searchParams.get("code")
+		if (code) {
+			localStorage.setItem("username", "")
+			RedditAccount.addAccount({ username: username, code: code })
+		}
+	}, [searchParams])
 
 	const onSubmit = (data: IFormRedditAccount) => {
-		mutateAddAccount(data)
+		localStorage.setItem("username", data.username)
+		router.push(
+			"https://www.reddit.com/api/v1/authorize?client_id=6F9X7p7bpTzOLcerqiTwww&response_type=code&state=qwerty-qwerty&redirect_uri=https://redditads.netlify.app/accounts&duration=permanent&scope=adsread,adsconversions,history,adsedit,read"
+		)
 	}
 
 	useEffect(() => {
@@ -61,13 +60,6 @@ const AddAccount: React.FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 							placeholder='Имя аккаунта: '
 							className={styles.input_field}
 							{...register("username", { required: true })}
-							autoComplete='new-password'
-						/>
-						<input
-							type='password'
-							placeholder='Пароль: '
-							className={styles.input_field}
-							{...register("password", { required: true })}
 							autoComplete='new-password'
 						/>
 					</div>
