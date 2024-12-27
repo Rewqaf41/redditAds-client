@@ -55,7 +55,7 @@ export function Sidebar() {
 					</div>
 				</aside>
 			) : (
-				<div></div>
+				<div className='bg-neutral-950'></div>
 			)}
 		</>
 	)
