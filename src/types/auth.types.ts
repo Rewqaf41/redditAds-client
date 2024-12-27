@@ -17,5 +17,5 @@ export interface IFormRegister {
 
 export interface IFormRedditAccount {
 	username: string
-	password: string
+	code: string
 }
