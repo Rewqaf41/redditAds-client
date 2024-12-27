@@ -23,7 +23,8 @@ const AddAccount: React.FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 		const code = searchParams.get("code")
 		if (code) {
 			localStorage.setItem("username", "")
-			RedditAccount.addAccount({ username: username, code: code })
+			;(async () =>
+				await RedditAccount.addAccount({ username: username, code: code }))()
 		}
 	}, [searchParams])
 
