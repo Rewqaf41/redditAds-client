@@ -1,6 +1,6 @@
-import { removeFromStorage, saveTokenStorage } from '@/services/auth.helper'
-import authService from '@/services/auth.service'
-import { AxiosInstance } from 'axios'
+import { removeFromStorage, saveTokenStorage } from '@/services/auth/auth.helper'
+import authService from '@/services/auth/auth.service'
+import { type AxiosInstance } from 'axios'
 import { errorCatch } from './api.helper'
 
 export function refreshInterceptor(instance: AxiosInstance) {

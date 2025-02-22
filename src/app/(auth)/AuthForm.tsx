@@ -1,15 +1,21 @@
 "use client"
 
-import authService from "@/services/auth.service"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import { SubmitHandler, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
-import { IFormLogin, IFormRegister } from "@/types/auth.types"
+import { IFormAuth } from "@/types/auth/auth.types"
 
+import { loginSchema, TypeLoginSchema } from "@/schemas/auth/auth.schema"
 import Link from "next/link"
+
+import { useAuth } from "@/hooks/useAuth"
+import { getAccessToken } from "@/services/auth/auth.helper"
+import authService from "@/services/auth/auth.service"
+import { useEffect } from "react"
 import styles from "./AuthForm.module.scss"
 
 interface AuthFormProps {
@@ -17,48 +23,65 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ isLogin }: AuthFormProps) {
-	const { register, handleSubmit, reset } = useForm<
-		IFormLogin | IFormRegister
-	>()
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isValid },
+	} = useForm<TypeLoginSchema>({
+		resolver: zodResolver(loginSchema),
+		defaultValues: {
+			username: "",
+			password: "",
+		},
+	})
+
+	const { auth, exit } = useAuth()
+
+	useEffect(() => {
+		const token = getAccessToken()
+		if (!token) {
+			exit()
+		}
+	}, [exit])
 
 	const router = useRouter()
 
 	const { mutate: mutateLogin, isPending: isLoginPending } = useMutation({
 		mutationKey: ["login"],
-		mutationFn: (data: IFormLogin) => authService.login(data),
+		mutationFn: (data: IFormAuth) => authService.login(data),
 		onSuccess() {
+			auth()
 			reset()
 			router.push("/accounts")
-			toast.success("Login successful")
+			toast.success("Успешный вход")
+		},
+		onError() {
+			toast.error("Вход не удался")
 		},
 	})
 
-	const {
-		error,
-		mutate: mutateRegister,
-		isPending: isRegisterPending,
-	} = useMutation({
+	const { mutate: mutateRegister, isPending: isRegisterPending } = useMutation({
 		mutationKey: ["register"],
-		mutationFn: (data: IFormRegister) => authService.register(data),
-		onError() {
-			toast.error("Registration failed")
-		},
+		mutationFn: (data: IFormAuth) => authService.register(data),
 		onSuccess() {
+			auth()
 			reset()
 			router.push("/accounts")
-			toast.success("Registration successful")
+			toast.success("Регистрация успешна")
+		},
+		onError() {
+			toast.error("Регистрация не удалась")
 		},
 	})
 
 	const isPending = isLoginPending || isRegisterPending
 
-	const onSubmit: SubmitHandler<IFormLogin | IFormRegister> = (data) => {
+	const onSubmit: SubmitHandler<IFormAuth> = (data) => {
 		if (isLogin) {
-			const formData = data as IFormLogin
-			mutateLogin(formData)
+			mutateLogin(data)
 		} else {
-			const formData = data as IFormRegister
-			mutateRegister(formData)
+			mutateRegister(data)
 		}
 	}
 
@@ -69,69 +92,63 @@ export function AuthForm({ isLogin }: AuthFormProps) {
 		>
 			<div className='mb-4'>
 				<label className='text-gray-600'>
-					Username
+					Логин
 					<input
-						type='username'
-						placeholder='Enter username: '
-						{...register("username", { required: true })}
+						type='text'
+						placeholder='Введите логин'
+						{...register("username")}
 						className={clsx(
 							styles["input-field"],
-							"w-full p-2 border rounded focus:outline-none focus:border-indigo-500"
+							"w-full h-10 p-2 border rounded focus:outline-none focus:border-indigo-500",
+							errors.username ? "border-red-500" : ""
 						)}
 					/>
 				</label>
+				<p className='text-red-500 text-sm min-h-[20px] mt-1'>
+					{errors.username?.message}
+				</p>
 			</div>
-			{isLogin ? null : (
-				<div className='mb-4 col-span-2'>
-					<label className='text-gray-600'>
-						Email
-						<input
-							type='email'
-							placeholder='Enter email: '
-							{...register("email", { required: true })}
-							className={clsx(
-								styles["input-field"],
-								"w-full p-2 border rounded focus:outline-none focus:border-indigo-500"
-							)}
-						/>
-					</label>
-				</div>
-			)}
 
-			<div className='mb-4 col-span-2'>
+			<div className='mb-4'>
 				<label className='text-gray-600'>
-					Password
+					Пароль
 					<input
 						type='password'
-						placeholder='Enter password: '
-						{...register("password", { required: true })}
+						placeholder='Введите пароль'
+						{...register("password")}
 						className={clsx(
 							styles["input-field"],
-							"w-full p-2 border rounded focus:outline-none focus:border-indigo-500"
+							"w-full h-10 p-2 border rounded focus:outline-none focus:border-indigo-500",
+							errors.password ? "border-red-500" : ""
 						)}
 					/>
 				</label>
+				<p className='text-red-500 text-sm min-h-[20px] mt-1'>
+					{errors.password?.message}
+				</p>
 			</div>
+
 			{isLogin ? (
 				<Link className={styles.link} href='/register'>
-					Create an account
+					Создать аккаунт
 				</Link>
 			) : (
 				<Link className={styles.link} href='/login'>
-					Already have an account? Sign in{" "}
+					Уже есть аккаунт? Войти{" "}
 				</Link>
 			)}
-			<div className='mb-4 col-span-2'>
+
+			<div className='mb-3 col-span-2'>
 				<button
 					type='submit'
 					className={clsx(
 						styles["btn-primary"],
-						isLogin ? "bg-indigo-500" : "bg-indigo-500",
-						isPending ? "opacity-75 cursor-not-allowed" : ""
+						"bg-indigo-500",
+						isPending || !isValid ? "opacity-75 cursor-not-allowed" : ""
 					)}
-					disabled={isPending}
+					disabled={isPending || !isValid}
 				>
-					{isLogin ? "Sign in" : "Sign up"}
+					{isLogin ? "Войти" : "Регистрация"}
 				</button>
 			</div>
 		</form>

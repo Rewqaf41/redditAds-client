@@ -1,6 +1,7 @@
 import { AUTH_URL } from '@/constants/constants'
-import axios, { CreateAxiosDefaults } from 'axios'
+import axios, { type CreateAxiosDefaults } from 'axios'
 import { getContentType } from './api.helper'
+import { refreshInterceptor } from './authRefreshToken'
 
 const axiosOptions: CreateAxiosDefaults = {
 	baseURL: AUTH_URL,
@@ -9,3 +10,5 @@ const axiosOptions: CreateAxiosDefaults = {
 }
 
 export const instance = axios.create(axiosOptions)
+
+refreshInterceptor(instance)
