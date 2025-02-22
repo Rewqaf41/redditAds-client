@@ -2,7 +2,6 @@
 
 import LayoutClient from "@/components/layout/layout"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { PropsWithChildren, useState } from "react"
 
 export function Providers({ children }: PropsWithChildren<unknown>) {
@@ -11,7 +10,6 @@ export function Providers({ children }: PropsWithChildren<unknown>) {
 	return (
 		<QueryClientProvider client={client}>
 			<LayoutClient>{children}</LayoutClient>
-			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	)
 }
