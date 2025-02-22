@@ -1,0 +1,39 @@
+{
+	"accounts": [{
+		"username" : "Waste_Explanation108",
+		"status": "active",
+		"metrics": [{
+			"impressions": "10421",
+			"spend": "301",
+			"clicks": "6439",
+			"ecpm": "0.9",
+			"cpc": "0.4",
+			"ctr": "0.5"
+		}]
+	},
+	{
+		"username" : "Rewqaf",
+		"status": "active",
+		"metrics": [{
+			"impressions": "4921",
+			"spend": "142",
+			"clicks": "1036",
+			"ecpm": "0.5",
+			"cpc": "0.1",
+			"ctr": "0.2"
+		}]
+	},
+	{
+		"username" : "Fierce",
+		"status": "disabled",
+		"metrics": [{
+			"impressions": "60",
+			"spend": "10",
+			"clicks": "5",
+			"ecpm": "0",
+			"cpc": "0",
+			"ctr": "0"
+		}]
+	}
+	]
+}
