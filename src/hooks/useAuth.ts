@@ -1,17 +1,17 @@
 "use client"
 
-import { getAccessToken } from '@/services/auth.helper'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { authStore } from '@/store/auth/auth.store'
 
-export function useAuth(): boolean {
-	const [isLoggedIn, setIsLoggedIn] = useState(false)
-	const pathname = usePathname()
+export function useAuth() {
+	const isAuth = authStore((state) => state.isAuth)
+	const setIsAuth = authStore((state) => state.setIsAuth)
 
-	useEffect(() => {
-		const accessToken = getAccessToken()
-		setIsLoggedIn(!!accessToken)
-	}, [pathname])
+	const auth = () => setIsAuth(true)
+	const exit = () => setIsAuth(false)
 
-	return isLoggedIn
+	return {
+		isAuth,
+		auth,
+		exit,
+	}
 }
