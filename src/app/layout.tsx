@@ -1,8 +1,8 @@
 "use client"
-import { Header } from "@/components/layout/Header/Header"
 import { Subheader } from "@/components/layout/Subheader/Subheader"
 import { Inter } from "next/font/google"
 import { usePathname } from "next/navigation"
+import { Toaster } from "react-hot-toast"
 import "./globals.scss"
 import { Providers } from "./Providers"
 
@@ -18,9 +18,9 @@ export default function RootLayout({
 		<html lang='en'>
 			<body className={inter.className}>
 				<Providers>
-					<Header />
 					{pathname === "/accounts" ? <Subheader /> : null}
 					{children}
+					<Toaster position='bottom-right' />
 				</Providers>
 			</body>
 		</html>
