@@ -1,16 +1,28 @@
 "use client"
-import { ButtonOpen } from "@/components/ui/ButtonOpen/ButtonOpen"
-import Field from "@/components/ui/Field/Field"
+import { ButtonOpen } from "@/components/ui/element/ButtonOpen/ButtonOpen"
+import Field from "@/components/ui/element/Field/Field"
 import { useAuth } from "@/hooks/useAuth"
-import { Search } from "lucide-react"
+import { accountStore } from "@/store/account/account.store"
+import { Pencil, Search, Trash2 } from "lucide-react"
 import styles from "./Subheader.module.scss"
 
 export function Subheader() {
-	const Auth = useAuth()
-	return Auth ? (
+	const { isAuth } = useAuth()
+	const { selectedAccounts } = accountStore()
+	return isAuth ? (
 		<div className={styles.subheader}>
 			<div className={styles.containers}>
 				<div className={styles.elements}>
+					{selectedAccounts.length ? (
+						<div className='flex gap-x-5'>
+							<button>
+								<Pencil className='hover:opacity-50' />
+							</button>
+							<button>
+								<Trash2 className='hover:text-red-600' />
+							</button>
+						</div>
+					) : null}
 					<ButtonOpen />
 					<Field
 						className={styles.search}
