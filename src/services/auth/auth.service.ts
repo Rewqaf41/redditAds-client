@@ -51,14 +51,21 @@ class AuthService {
 	async logout() {
 		const accessToken = getAccessToken()
 		
-		const response = await instance.post<boolean>('/logout', 
-			{"accessToken" : accessToken}
-		)
+		try {
+      const response = await instance.post<boolean>("/logout", {
+        accessToken: accessToken || null,
+      });
 
-		if (response.data) removeFromStorage()
+      if (response.data) {
+        removeFromStorage();
+      }
 
-
-		return response
+      return response;
+    } catch (error) {
+      console.error("Logout error:", error);
+      removeFromStorage();
+      return { data: true };
+    }
 	}
 }
 
