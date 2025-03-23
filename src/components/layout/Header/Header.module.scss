@@ -1,5 +1,5 @@
 .header {
-	@apply w-full h-10 bg-[#202938] border-b border-border;
+	@apply w-full h-10 bg-[#202938];
 
 	.container {
 		@apply flex items-center justify-center h-full w-full;
@@ -8,6 +8,10 @@
 		@apply flex-grow h-full flex items-center justify-center text-center text-white;
 		&:hover {
 			@apply bg-[#161c26];
+		}
+
+		&.active {
+			@apply bg-[#10151d];
 		}
 	}
 }

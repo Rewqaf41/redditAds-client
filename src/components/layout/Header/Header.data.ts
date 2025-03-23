@@ -5,14 +5,14 @@ export const MENU = [
 	},
 	{
 		name: "Кампании",
-		url: "/campaigns",
+		url: "/campaings",
 	},
 	{
-		name: "Адсеты",
-		url: "/adsets",
+		name: "Группы",
+		url: "/groups",
 	},
 	{
-		name: "Объявления",
+		name: "Рекламные объявления",
 		url: "/ads",
 	}
 ]
