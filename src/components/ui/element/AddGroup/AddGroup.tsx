@@ -1,10 +1,12 @@
 "use client"
+import { IGroupData } from "@/types/reddit/redditApi.types"
 import cn from "clsx"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { IoMdClose } from "react-icons/io"
 import { Checkbox } from "../../common/Checkbox"
 import { Label } from "../../common/Label"
+import { MultiSelect } from "../../common/MultiSelect"
 import { RadioGroup, RadioGroupItem } from "../../common/RadioGroup"
 import {
 	Select,
@@ -19,6 +21,14 @@ import { CalendarForm } from "../CalendarFrom/CalendarFrom"
 import Field from "../Field/Field"
 import styles from "./AddGroup.module.scss"
 
+import { campaingsStore } from "@/store/campaing/campaings.store"
+import { groupStore } from "@/store/group/group.store"
+import { Group } from "@/store/types"
+import { generateRandomMetrics } from "@/utils/generateRandomMetrics"
+import toast from "react-hot-toast"
+import carriersData from "./carriers.data.json"
+import devicesData from "./device.data.json"
+
 interface WindowComponentProps {
 	isOpen: boolean
 	onClose: () => void
@@ -28,15 +38,30 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 	const [showWindow, setShowWindow] = useState(false)
 	const [selectedGender, setSelectedGender] = useState<string | null>()
 	const [selectedDevis, setSelectedDevis] = useState<string | null>()
+
 	const [isIOS, setIsIOS] = useState(false)
 	const [isAndroid, setIsAndroid] = useState(false)
-	const [isDesktop, setIsDesktop] = useState(false)
 
-	const { handleSubmit, register, setValue, reset, control, watch } = useForm()
+	const { items: campaings } = campaingsStore()
 
-	const onSubmit = (data: any) => {
-		console.log(data)
-		reset()
+	const { addItem } = groupStore()
+
+	const { handleSubmit, register, setValue, reset, control, watch } =
+		useForm<IGroupData>()
+
+	const onSubmit = (data: IGroupData) => {
+		const cleanedGoalValue = data.goal_value.replace(/\$/g, "")
+		const NewGroup: Group = {
+			name: data.name,
+			status: "active",
+			metrics: [generateRandomMetrics(cleanedGoalValue)],
+			campaigns: data.campaings,
+		}
+
+		addItem(NewGroup)
+
+		toast.success("Группы создана")
+		onClose()
 	}
 
 	useEffect(() => {
@@ -49,12 +74,6 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 		}
 	}, [isOpen])
 
-	useEffect(() => {
-		setValue("goal_value", "$50.00")
-	}, [setValue])
-
-	const value = watch("goal_value", "$50.00")
-
 	const handleGenderSelect = (gender: string | null) => {
 		setSelectedGender(gender)
 		console.log(selectedGender)
@@ -63,7 +82,7 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 
 	const handleDeviceSelect = (device: string | null) => {
 		setSelectedDevis(device)
-		setValue("device", device ?? null, { shouldDirty: true })
+		setValue("devices", device ?? null, { shouldDirty: true })
 	}
 
 	return showWindow ? (
@@ -78,7 +97,27 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 				<div className={styles.modal_content}>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className='bg-[#151f31] p-5 m-4 rounded-md'>
-							<div className='mb-3'>Название</div>
+							<div className='mb-3'>Кампании</div>
+							<Controller
+								name='campaings'
+								control={control}
+								rules={{ required: true }}
+								render={({ field }) => (
+									<MultiSelect
+										options={campaings.map((item) => ({
+											label: item.name,
+											value: item.name,
+										}))}
+										onValueChange={field.onChange}
+										placeholder='Select campaings'
+										animation={2}
+										maxCount={10}
+									/>
+								)}
+							/>
+						</div>
+						<div className='bg-[#151f31] p-5 m-4 rounded-md'>
+							<div className='mb-3'>Название группы</div>
 							<Field
 								className='border border-neutral-700 p-2 rounded-md'
 								placeholder='Название группы'
@@ -263,10 +302,7 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 											Андроид
 										</div>
 										<div>
-											<Checkbox
-												onClick={() => setIsDesktop(!isDesktop)}
-												className='data-[state=checked]:bg-transparent'
-											/>
+											<Checkbox className='data-[state=checked]:bg-transparent' />
 											Пк
 										</div>
 									</div>
@@ -275,10 +311,19 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 											<label className='opacity-70 text-sm'>
 												iOS-устройства
 											</label>
-											<Field
-												className='border border-neutral-700 p-2 rounded-md'
-												placeholder='Например: iPhone 16 Pro Max'
-												{...register("ios_devices", { required: false })}
+											<Controller
+												name='ios_devices'
+												control={control}
+												render={({ field }) => (
+													<MultiSelect
+														options={devicesData.ios}
+														onValueChange={field.onChange}
+														defaultValue={field.value}
+														placeholder='Например: iPhone'
+														animation={2}
+														maxCount={10}
+													/>
+												)}
 											/>
 										</div>
 									)}
@@ -288,10 +333,19 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 											<label className='opacity-70 text-sm'>
 												Андроид устройства
 											</label>
-											<Field
-												className='border border-neutral-700 p-2 rounded-md'
-												placeholder='Например: Galaxy S21 Ultra 5G'
-												{...register("android_devices", { required: false })}
+											<Controller
+												name='android_devices'
+												control={control}
+												render={({ field }) => (
+													<MultiSelect
+														options={devicesData.android}
+														onValueChange={field.onChange}
+														defaultValue={field.value}
+														placeholder='Например: Samsung'
+														animation={2}
+														maxCount={10}
+													/>
+												)}
 											/>
 										</div>
 									)}
@@ -299,10 +353,19 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 							) : null}
 							<div className='mt-3'>
 								<label className='opacity-70 text-sm'>Сотовые носители</label>
-								<Field
-									className='border border-neutral-700 p-2 rounded-md'
-									placeholder='Например: Verizon US'
-									{...register("carriers", { required: false })}
+								<Controller
+									name='carriers'
+									control={control}
+									render={({ field }) => (
+										<MultiSelect
+											options={carriersData.carriers}
+											onValueChange={field.onChange}
+											defaultValue={field.value}
+											placeholder='Например Verizon US'
+											animation={2}
+											maxCount={10}
+										/>
+									)}
 								/>
 							</div>
 						</div>
@@ -438,7 +501,27 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 										/>
 									)}
 								/>
-								<label className='opacity-70 text-sm'>Дата начала</label>
+
+								<label className='opacity-70 text-sm'>
+									Установить дату окончания
+								</label>
+								<div>
+									<div className='mt-2'>
+										<Controller
+											control={control}
+											name='end_time'
+											render={({ field, fieldState }) => (
+												<CalendarForm
+													field={field}
+													fieldState={fieldState}
+													label='Дата Окончания'
+													placeholder='Выберите дату конца'
+													setValue={setValue}
+												/>
+											)}
+										/>
+									</div>
+								</div>
 							</div>
 						</div>
 
