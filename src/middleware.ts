@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { EnumTokens } from './services/auth/auth.service'
 
 export default async function middleware(req: NextRequest) {
-	const token = req.cookies.get(EnumTokens.ACCESS_TOKEN)?.value
+	const token = req.cookies.get(EnumTokens.REFRESH_TOKEN)?.value
 
 	if (!token) {
 		return NextResponse.redirect(new URL("/login", req.url))
@@ -11,5 +11,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/", "/accounts"],
+	matcher: ["/", "/accounts", "/campaings", "/groups", "/ads"],
 }
