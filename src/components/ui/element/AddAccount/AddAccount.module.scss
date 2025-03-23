@@ -1,11 +1,10 @@
-/* AddAccount.module.scss */
 .modal {
-  @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50;
+  @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm;
 }
 
 .modal_container {
   @apply bg-gray-900 border-2 border-neutral-700 rounded-md shadow-lg flex flex-col;
-  width: 25%;
+  width: 35%;
   max-width: 400px;
   min-width: 300px;
   padding-bottom: 1rem;
@@ -30,8 +29,10 @@
 
 .input_group {
   @apply mb-3 mt-4 px-6;
-  display: grid;
-  grid-gap: 1rem;
+}
+
+.input_wrapper {
+  @apply flex flex-col mb-2;
 }
 
 .input_field {
@@ -39,11 +40,43 @@
 }
 
 .buttons_group {
-  @apply flex items-center justify-between px-6;
+  @apply flex items-center justify-between px-6 mt-4;
+}
+
+.counter_group {
+  @apply flex items-center;
+}
+
+.button_plus {
+  @apply p-2 rounded-full bg-green-500 text-white flex items-center justify-center mr-2;
+  &:hover {
+    @apply bg-green-600;
+  }
+  &:disabled {
+    @apply bg-gray-500 cursor-not-allowed;
+  }
+}
+
+.counter {
+  @apply text-white text-lg mx-2;
+}
+
+.button_minus {
+  @apply p-2 rounded-full bg-red-500 text-white flex items-center justify-center mr-4; /* Отступ перед кнопкой Добавить */
+  &:hover {
+    @apply bg-red-600;
+  }
+  &:disabled {
+    @apply bg-gray-500 cursor-not-allowed;
+  }
+}
+
+.button_add_wrapper {
+  @apply flex justify-end;
 }
 
 .button_add {
-  @apply mt-4 rounded-sm px-4 py-3 text-lg bg-blue-500 text-black;
+  @apply rounded-sm px-4 py-2 text-lg bg-blue-500 text-black;
   &:hover {
     @apply bg-blue-600;
   }

@@ -1,0 +1,96 @@
+{
+	"callAction": [
+		{
+			"action": "Download",
+			"title": "Скачать"
+		},
+		{
+			"action": "Install",
+			"title": "Установить"
+		},
+		{
+			"action": "Shop Now",
+			"title": "Купить"
+		},
+		{
+			"action": "View More",
+			"title": "Посмотреть больше"
+		},
+		{
+			"action": "Sign up",
+			"title": "Зарегистрироваться"
+		},
+		{
+			"action": "Learn More",
+			"title": "Узнать подробнее"
+		},
+		{
+			"action": "Contact Us",
+			"title": "Свяжитесь с нами"
+		},
+		{
+			"action": "Get Showtimes",
+			"title": "Узнайте время показов"
+		},
+		{
+			"action": "Get a Quote",
+			"title": "Получите ценовое предложение"
+		},
+		{
+			"action": "See Menu",
+			"title": "Посмотреть меню"
+		},
+		{
+			"action": "Apply Now",
+			"title": "Применить сейчас"
+		},
+		{
+			"action": "Watch Now",
+			"title": "Посмотреть прямо сейчас"
+		},
+		{
+			"action": "Play Now",
+			"title": "Сыграть прямо сейчас"
+		},
+		{
+			"action": "Pre-order Now",
+			"title": "Предзаказать прямо сейчас"
+		},
+		{
+			"action": "Order Now",
+			"title": "Заказать прямо сейчас"
+		},
+		{
+			"action": "Book Now",
+			"title": "Бронируйте прямо сейчас"
+		},
+		{
+			"action": "Buy Tickets",
+			"title": "Купить билеты"
+		},
+		{
+			"action": "Get Directions",
+			"title": "Проложить маршрут"
+		},
+		{
+			"action": "Listen Now",
+			"title": "Слушайте прямо сейчас"
+		},
+		{
+			"action": "Read more",
+			"title": "Прочитайте больше"
+		},
+		{
+			"action": "Subscribe",
+			"title": "Подписаться"
+		},
+		{
+			"action": "Visit Store",
+			"title": "Посетить магазин"
+		},
+		{
+			"action": "Donate Now",
+			"title": "Пожертвовать"
+		}
+	]
+}

@@ -1,4 +1,9 @@
 "use client"
+import { accountStore } from "@/store/account/account.store"
+import { campaingsStore } from "@/store/campaing/campaings.store"
+import type { Campaing } from "@/store/types"
+import type { ICampingData } from "@/types/reddit/redditApi.types"
+import { generateRandomMetrics } from "@/utils/generateRandomMetrics"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -21,11 +26,34 @@ interface WindowComponentProps {
 
 export function AddCamping({ isOpen, onClose }: WindowComponentProps) {
 	const [showWindow, setShowWindow] = useState(false)
+	const { addItem } = campaingsStore()
+	const { selectedItems, toggleAllSelection } = accountStore()
 
-	const { control, handleSubmit, register, watch, setValue } = useForm()
+	// const { mutate: mutateCreateCamping } = useMutation({
+	// 	mutationKey: ["create_camping"],
+	// 	mutationFn: (data: ICampingData) =>
+	// redditApiService.CreateCamping(selectedAccounts, data),
+	// 	onSuccess() {
+	// 		toast.success("Кампания создана")
+	// 		setShowWindow(!showWindow)
+	// 	},
+	// })
 
-	const onSubmit = (data: any) => {
-		console.log(data)
+	const { control, handleSubmit, register, watch, setValue } =
+		useForm<ICampingData>()
+
+	const onSubmit = (data: ICampingData) => {
+		const spendCap = data.spend_cap.replace(/\$/g, "").trim()
+		const NewCampaing: Campaing = {
+			name: data.name,
+			status: "active",
+			metrics: [generateRandomMetrics(spendCap)],
+			createdBy: selectedItems,
+		}
+
+		addItem(NewCampaing)
+		toggleAllSelection()
+
 		toast.success("Кампания создана")
 		onClose()
 	}
@@ -33,11 +61,19 @@ export function AddCamping({ isOpen, onClose }: WindowComponentProps) {
 	const spendCapValue = watch("spend_cap", "")
 
 	useEffect(() => {
-		if (spendCapValue) {
-			const cleanedValue = spendCapValue.replace(/\$/g, "").trim()
-			setValue("spend_cap", cleanedValue + "$", { shouldValidate: true })
+		if (!spendCapValue) return
+		const numericValue = spendCapValue.replace(/\$/g, "").trim()
+		if (!isNaN(Number(numericValue)) && numericValue !== "") {
+			setValue("spend_cap", "$ " + numericValue, { shouldValidate: true })
+		} else {
+			setValue("spend_cap", numericValue, { shouldValidate: true })
 		}
 	}, [spendCapValue, setValue])
+
+	const handleSpendCapChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		let value = event.target.value.replace(/\$/g, "").trim()
+		setValue("spend_cap", value, { shouldValidate: true })
+	}
 
 	useEffect(() => {
 		if (isOpen) {
@@ -78,7 +114,7 @@ export function AddCamping({ isOpen, onClose }: WindowComponentProps) {
 							</div>
 						</div>
 						<Controller
-							name='object'
+							name='objective'
 							control={control}
 							render={({ field }) => (
 								<Select onValueChange={field.onChange} value={field.value}>
@@ -119,8 +155,11 @@ export function AddCamping({ isOpen, onClose }: WindowComponentProps) {
 						</div>
 						<Field
 							className='border border-neutral-700 p-2 rounded-md'
-							placeholder='0,00 $'
-							{...register("spend_cap", { required: false })}
+							placeholder='$ 0,00'
+							{...register("spend_cap", {
+								required: false,
+								onChange: handleSpendCapChange,
+							})}
 						/>
 					</div>
 

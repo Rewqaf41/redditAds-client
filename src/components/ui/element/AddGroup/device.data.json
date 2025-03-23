@@ -1,0 +1,232 @@
+{
+  "ios": [{
+    "value": "Apple",
+    "label": "Apple"
+  }],
+  "android": [
+    {
+      "value": "AT&T",
+      "label": "AT&T"
+    },
+    {
+      "value": "Alcatel",
+      "label": "Alcatel"
+    },
+    {
+      "value": "Amazon",
+      "label": "Amazon"
+    },
+    {
+      "value": "Asus",
+      "label": "Asus"
+    },
+    {
+      "value": "BlackBerry",
+      "label": "BlackBerry"
+    },
+    {
+      "value": "Blackshark",
+      "label": "Blackshark"
+    },
+    {
+      "value": "Blackview",
+      "label": "Blackview"
+    },
+    {
+      "value": "Blu",
+      "label": "Blu"
+    },
+    {
+      "value": "Cat",
+      "label": "Cat"
+    },
+    {
+      "value": "Coolpad",
+      "label": "Coolpad"
+    },
+    {
+      "value": "Cricket",
+      "label": "Cricket"
+    },
+    {
+      "value": "Cubot",
+      "label": "Cubot"
+    },
+    {
+      "value": "Doogee",
+      "label": "Doogee"
+    },
+    {
+      "value": "Droi",
+      "label": "Droi"
+    },
+    {
+      "value": "Essential Products",
+      "label": "Essential Products"
+    },
+    {
+      "value": "Fairphone",
+      "label": "Fairphone"
+    },
+    {
+      "value": "General Mobile",
+      "label": "General Mobile"
+    },
+    {
+      "value": "Google",
+      "label": "Google"
+    },
+    {
+      "value": "HTC",
+      "label": "HTC"
+    },
+    {
+      "value": "HXY",
+      "label": "HXY"
+    },
+    {
+      "value": "Huawei",
+      "label": "Huawei"
+    },
+    {
+			"value": "Infinix",
+      "label": "Infinix"
+    },
+    {
+      "value": "Joyar",
+      "label": "Joyar"
+    },
+    {
+      "value": "Kyocera",
+      "label": "Kyocera"
+    },
+    {
+      "value": "LG",
+      "label": "LG"
+    },
+    {
+      "value": "LGE",
+      "label": "LGE"
+    },
+    {
+      "value": "Lenovo",
+      "label": "Lenovo"
+    },
+    {
+      "value": "Microsoft",
+      "label": "Microsoft"
+    },
+    {
+      "value": "Motorola",
+      "label": "Motorola"
+    },
+    {
+      "value": "Nokia",
+      "label": "Nokia"
+    },
+    {
+      "value": "Nubia",
+      "label": "Nubia"
+    },
+    {
+      "value": "OnePlus",
+      "label": "OnePlus"
+    },
+    {
+      "value": "Onn",
+      "label": "Onn"
+    },
+    {
+      "value": "Oppo",
+      "label": "Oppo"
+    },
+    {
+      "value": "Oukitel",
+      "label": "Oukitel"
+    },
+    {
+      "value": "RED",
+      "label": "RED"
+    },
+    {
+      "value": "Razer",
+      "label": "Razer"
+    },
+    {
+      "value": "Realme",
+      "label": "Realme"
+    },
+    {
+      "value": "SHIFT",
+      "label": "SHIFT"
+    },
+    {
+      "value": "Samsung",
+      "label": "Samsung"
+    },
+    {
+      "value": "Sonimtech",
+      "label": "Sonimtech"
+    },
+    {
+      "value": "Sony",
+      "label": "Sony"
+    },
+    {
+      "value": "T-Mobile",
+      "label": "T-Mobile"
+    },
+    {
+      "value": "TCL",
+      "label": "TCL"
+    },
+    {
+      "value": "Tecno",
+      "label": "Tecno"
+    },
+    {
+      "value": "Tinno",
+      "label": "Tinno"
+    },
+    {
+      "value": "UMX",
+      "label": "UMX"
+    },
+    {
+      "value": "UMiDIGI",
+      "label": "UMiDIGI"
+    },
+    {
+      "value": "Ulefone",
+      "label": "Ulefone"
+    },
+    {
+      "value": "Umidigi",
+      "label": "Umidigi"
+    },
+    {
+      "value": "Vivo",
+      "label": "Vivo"
+    },
+    {
+      "value": "Vsmart",
+      "label": "Vsmart"
+    },
+    {
+      "value": "Xiaomi",
+      "label": "Xiaomi"
+    },
+    {
+      "value": "Yulong",
+      "label": "Yulong"
+    },
+    {
+      "value": "ZTE",
+      "label": "ZTE"
+    },
+    {
+      "value": "bq",
+      "label": "bq"
+    }
+  ]
+}

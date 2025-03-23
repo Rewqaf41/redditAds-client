@@ -1,10 +1,9 @@
 "use client"
 
-import RedditAccount from "@/services/reddit/redditAccount.service"
 import { IFormRedditAccounts } from "@/types/auth/auth.types"
-import { useSearchParams } from "next/navigation"
 import { FC, useEffect, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
+import { FaMinus, FaPlus } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 import styles from "./AddAccount.module.scss"
 
@@ -17,49 +16,13 @@ const AddAccount: FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 	const [showWindow, setShowWindow] = useState(false)
 	const { register, handleSubmit, reset, control } =
 		useForm<IFormRedditAccounts>({
-			defaultValues: { accounts: [{ username: "" }] },
+			defaultValues: { accounts: [{ username: "", password: "" }] },
 		})
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: "accounts",
 		keyName: "id",
 	})
-	const searchParams = useSearchParams()
-
-	useEffect(() => {
-		const code = searchParams.get("code")
-		if (code) {
-			;(async () => {
-				try {
-					const response = await RedditAccount.addAccount({
-						username: localStorage.getItem("username") || "",
-						code: code,
-					})
-					if (response.status === 200) {
-						window.close()
-					}
-				} catch (error) {
-					console.error("Ошибка при добавлении аккаунта:", error)
-				}
-			})()
-		}
-	}, [searchParams])
-
-	const openRedditTabs = (accounts: { username: string }[]) => {
-		accounts.forEach((account) => {
-			const url = `https://www.reddit.com/api/v1/authorize?client_id=6F9X7p7bpTzOLcerqiTwww&response_type=code&state=qwerty-qwerty&redirect_uri=https://redditads.netlify.app/accounts&duration=permanent&scope=adsread,adsconversions,history,adsedit,read&username=${account.username}`
-			window.open(url, "_blank")
-		})
-	}
-
-	const onSubmit = (data: IFormRedditAccounts) => {
-		const usernames = data.accounts.map((account) => account.username).join(",")
-		localStorage.setItem("accounts", usernames)
-
-		openRedditTabs(data.accounts)
-
-		reset()
-	}
 
 	useEffect(() => {
 		if (isOpen) {
@@ -70,6 +33,24 @@ const AddAccount: FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 			setShowWindow(false)
 		}
 	}, [isOpen])
+
+	const onSubmit = (data: IFormRedditAccounts) => {
+		console.log("Submitted data:", data)
+		reset()
+		onClose()
+	}
+
+	const handleAddField = () => {
+		if (fields.length < 6) {
+			append({ username: "", password: "" })
+		}
+	}
+
+	const handleRemoveField = () => {
+		if (fields.length > 1) {
+			remove(fields.length - 1)
+		}
+	}
 
 	return showWindow ? (
 		<div className={styles.modal}>
@@ -83,19 +64,53 @@ const AddAccount: FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 				<form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
 					{fields.map((field, index) => (
 						<div key={field.id} className={styles.input_group}>
-							<input
-								type='text'
-								placeholder='Имя аккаунта: '
-								className={styles.input_field}
-								{...register(`accounts.${index}.username`, { required: true })}
-								autoComplete='off'
-							/>
+							<div className={styles.input_wrapper}>
+								<input
+									type='text'
+									placeholder='Имя аккаунта'
+									className={styles.input_field}
+									{...register(`accounts.${index}.username`, {
+										required: true,
+									})}
+									autoComplete='off'
+								/>
+							</div>
+							<div className={styles.input_wrapper}>
+								<input
+									type='password'
+									placeholder='Пароль'
+									className={styles.input_field}
+									{...register(`accounts.${index}.password`, {
+										required: true,
+									})}
+									autoComplete='new-password'
+								/>
+							</div>
 						</div>
 					))}
 					<div className={styles.buttons_group}>
+						<div className={styles.counter_group}>
+							<button
+								type='button'
+								className={styles.button_plus}
+								onClick={handleAddField}
+								disabled={fields.length >= 5}
+							>
+								<FaPlus />
+							</button>
+							<span className={styles.counter}>{fields.length}</span>
+							<button
+								type='button'
+								className={styles.button_minus}
+								onClick={handleRemoveField}
+								disabled={fields.length <= 1}
+							>
+								<FaMinus />
+							</button>
+						</div>
 						<div className={styles.button_add_wrapper}>
 							<button type='submit' className={styles.button_add}>
-								Добавить аккаунт
+								Добавить аккаунт{fields.length > 1 ? "ы" : ""}
 							</button>
 						</div>
 					</div>
