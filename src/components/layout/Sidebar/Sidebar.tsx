@@ -1,4 +1,5 @@
 "use client"
+import data from "@/components/ui/element/Accounts/account.json"
 import { AddAds } from "@/components/ui/element/AddAds/AddAds"
 import { AddCamping } from "@/components/ui/element/AddCamping/AddCamping"
 import { AddGroup } from "@/components/ui/element/AddGroup/AddGroup"
@@ -18,7 +19,7 @@ export function Sidebar() {
 	const [campingIsOpen, setCampingIsOpen] = useState(false)
 	const [groupIsOpen, setGroupIsOpen] = useState(false)
 	const [adsIsOpen, setAdsIsOpen] = useState(false)
-	const { selectedAccounts } = accountStore()
+	const { selectedItems } = accountStore()
 	const { isAuth, exit } = useAuth()
 	const { push } = useRouter()
 	const { mutate: mutateLogout } = useMutation({
@@ -29,6 +30,12 @@ export function Sidebar() {
 			push("/login")
 		},
 	})
+
+	const hasDisabledAccount = selectedItems.some((username) => {
+		const account = data.accounts.find((acc) => acc.username === username)
+		return account?.status === "disabled" || account?.status === "loading"
+	})
+
 	return (
 		<>
 			{isAuth ? (
@@ -39,7 +46,7 @@ export function Sidebar() {
 								<FcReddit size={27} className='text-white' />
 							</div>
 						</div>
-						{selectedAccounts.length ? (
+						{selectedItems.length && !hasDisabledAccount ? (
 							<>
 								<div className='pb-5'>
 									<AddCamping
@@ -68,7 +75,7 @@ export function Sidebar() {
 										isOpen={adsIsOpen}
 										onClose={() => setAdsIsOpen(!adsIsOpen)}
 									/>
-									<button>
+									<button onClick={() => setAdsIsOpen(!adsIsOpen)}>
 										<Hint label='Создать Рекламу' side='right' asChild>
 											<PenBox size={27} />
 										</Hint>
