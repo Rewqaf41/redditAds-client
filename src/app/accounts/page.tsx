@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 	...NO_INDEX_PAGE,
 }
 
-export default function Page() {
+export default function AccountPage() {
 	return <Accounts />
 }
