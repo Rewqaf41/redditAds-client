@@ -14,5 +14,5 @@ export interface IFormRedditAccount {
 }
 
 export interface IFormRedditAccounts {
-  accounts: { username: string }[];
+  accounts: { username: string; password: string }[];
 }
