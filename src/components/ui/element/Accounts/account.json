@@ -34,6 +34,78 @@
 			"cpc": "0",
 			"ctr": "0"
 		}]
+	},
+	{
+		"username" : "Adrian",
+		"status": "active",
+		"metrics": [{
+			"impressions": "9358",
+			"spend": "160",
+			"clicks": "2480",
+			"ecpm": "0.5",
+			"cpc": "0.1",
+			"ctr": "0.2"
+		}]
+	},
+	{
+		"username" : "Samuel",
+		"status": "active",
+		"metrics": [{
+			"impressions": "7824",
+			"spend": "200",
+			"clicks": "5285",
+			"ecpm": "0.8",
+			"cpc": "0.9",
+			"ctr": "0.7"
+		}]
+	},
+	{
+		"username" : "Fredy",
+		"status": "active",
+		"metrics": [{
+			"impressions": "1673",
+			"spend": "120",
+			"clicks": "392",
+			"ecpm": "0.2",
+			"cpc": "0.1",
+			"ctr": "0.2"
+		}]
+	},
+	{
+		"username" : "Kandy",
+		"status": "active",
+		"metrics": [{
+			"impressions": "7847",
+			"spend": "500",
+			"clicks": "6892",
+			"ecpm": "0.9",
+			"cpc": "0.9",
+			"ctr": "0.8"
+		}]
+	},
+	{
+		"username" : "Mike Bayer",
+		"status": "loading",
+		"metrics": [{
+			"impressions": "2352",
+			"spend": "50",
+			"clicks": "324",
+			"ecpm": "0.1",
+			"cpc": "0.1",
+			"ctr": "0.1"
+		}]
+	},
+	{
+		"username" : "Kade",
+		"status": "active",
+		"metrics": [{
+			"impressions": "6292",
+			"spend": "150",
+			"clicks": "1520",
+			"ecpm": "0.4",
+			"cpc": "0.1",
+			"ctr": "0.2"
+		}]
 	}
 	]
 }

@@ -1,20 +1,58 @@
 "use client"
 
 import { accountStore } from "@/store/account/account.store"
+import { Account, MetricsType } from "@/store/types"
+import {
+	ArrowDownAZ,
+	ArrowDownNarrowWide,
+	ArrowDownWideNarrow,
+	ArrowDownZA,
+} from "lucide-react"
 import { Checkbox } from "../../common/Checkbox"
 import { StatusBadge } from "../Badges/StatusBadge"
-import data from "./account.json"
 
 export function Accounts() {
-	const { selectedAccounts, toggleAccountSelection, toggleAllSelection } =
-		accountStore()
+	const {
+		items,
+		selectedItems,
+		toggleItemSelection,
+		toggleAllSelection,
+		searchQuery,
+		sortKey,
+		sortOrder,
+		setSortKey,
+		isLoading,
+	} = accountStore()
 
-	const handleSelectAll = (checked: boolean) => {
-		toggleAllSelection(checked)
-	}
+	const filteredAccounts = items.filter((account: Account) =>
+		account.username.toLowerCase().includes(searchQuery.toLowerCase())
+	)
 
-	const handleRowSelect = (username: string, checked: boolean) => {
-		toggleAccountSelection(username)
+	const sortedAccounts = [...filteredAccounts].sort((a, b) => {
+		if (sortKey === "username") {
+			return sortOrder === "asc"
+				? a.username.localeCompare(b.username)
+				: b.username.localeCompare(a.username)
+		}
+
+		const key = sortKey as keyof MetricsType
+		const getNumericValue = (value: string) => {
+			const cleanedValue = value.replace(/[^0-9.]/g, "")
+			return parseFloat(cleanedValue) || 0
+		}
+
+		const valueA = getNumericValue(a.metrics[0][key])
+		const valueB = getNumericValue(b.metrics[0][key])
+
+		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
+	})
+
+	if (isLoading) {
+		return (
+			<div className='flex items-center justify-center h-64'>
+				<div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900'></div>
+			</div>
+		)
 	}
 
 	return (
@@ -24,35 +62,153 @@ export function Accounts() {
 					<tr className='bg-[#0d121f]'>
 						<th className='py-2 text-center'>
 							<Checkbox
-								checked={selectedAccounts.length === data.accounts.length}
-								onCheckedChange={handleSelectAll}
+								checked={selectedItems.length === sortedAccounts.length}
+								onCheckedChange={toggleAllSelection}
 							/>
 						</th>
-						<th className='py-2 px-4 text-left'>Аккаунт ↓</th>
-						<th className='py-2 px-4 text-left'>Статус ↓</th>
-						<th className='px-4 py-2 text-left'>Показы</th>
-						<th className='px-4 py-2 text-left'>Расход</th>
-						<th className='py-2 text-left'>Клики</th>
-						<th className='px-4 py-2 text-left'>ECPM</th>
-						<th className='px-4 py-2 text-left'>CPC</th>
-						<th className='px-4 py-2 text-left'>CTR</th>
+						<th
+							className='py-2 px-4 text-left cursor-pointer flex'
+							onClick={() => setSortKey("username")}
+						>
+							<div className='flex'>
+								Аккаунт
+								{sortKey === "username" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownAZ size={20} />
+									) : (
+										<ArrowDownZA size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
+						<th className='py-2 px-4 text-left'>Статус</th>
+						<th
+							className='px-4 py-2 text-left cursor-pointer flex'
+							onClick={() => setSortKey("impressions")}
+						>
+							Показы
+							{sortKey === "impressions" ? (
+								sortOrder === "asc" ? (
+									<ArrowDownNarrowWide size={20} />
+								) : (
+									<ArrowDownWideNarrow size={20} />
+								)
+							) : (
+								"↓"
+							)}
+						</th>
+						<th
+							className='px-4 py-2 text-left cursor-pointer'
+							onClick={() => setSortKey("spend")}
+						>
+							<div className='flex'>
+								Расход
+								{sortKey === "spend" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownNarrowWide size={20} />
+									) : (
+										<ArrowDownWideNarrow size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
+						<th
+							className='py-2 text-left cursor-pointer'
+							onClick={() => setSortKey("clicks")}
+						>
+							<div className='flex'>
+								Клики
+								{sortKey === "clicks" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownNarrowWide size={20} />
+									) : (
+										<ArrowDownWideNarrow size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
+						<th
+							className='px-4 py-2 text-left cursor-pointer'
+							onClick={() => setSortKey("ecpm")}
+						>
+							<div className='flex'>
+								ECPM
+								{sortKey === "ecpm" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownNarrowWide size={20} />
+									) : (
+										<ArrowDownWideNarrow size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
+						<th
+							className='px-4 py-2 text-left cursor-pointer'
+							onClick={() => setSortKey("cpc")}
+						>
+							<div className='flex'>
+								CPC
+								{sortKey === "cpc" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownNarrowWide size={20} />
+									) : (
+										<ArrowDownWideNarrow size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
+						<th
+							className='px-4 py-2 text-left cursor-pointer'
+							onClick={() => setSortKey("ctr")}
+						>
+							<div className='flex'>
+								CTR
+								{sortKey === "ctr" ? (
+									sortOrder === "asc" ? (
+										<ArrowDownNarrowWide size={20} />
+									) : (
+										<ArrowDownWideNarrow size={20} />
+									)
+								) : (
+									"↓"
+								)}
+							</div>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
-					{data.accounts.map((account) => {
+					{sortedAccounts.map((account) => {
 						const metrics = account.metrics[0]
-						const isSelected = selectedAccounts.includes(account.username)
+						const isSelected = selectedItems.includes(account.username)
 
 						return (
 							<tr
 								key={account.username}
-								className={isSelected ? "bg-gray-200/20" : ""}
+								className={
+									isSelected
+										? "bg-gray-200/20 cursor-pointer"
+										: "cursor-pointer"
+								}
+								onClick={() => toggleItemSelection(account.username)}
 							>
-								<td className='py-2 px-4 text-center'>
+								<td
+									className='py-2 px-4 text-center'
+									onClick={(e) => e.stopPropagation()}
+								>
 									<Checkbox
 										checked={isSelected}
-										onCheckedChange={(checked) =>
-											handleRowSelect(account.username, checked as boolean)
+										onCheckedChange={() =>
+											toggleItemSelection(account.username)
 										}
 									/>
 								</td>
