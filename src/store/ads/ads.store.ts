@@ -21,7 +21,7 @@ export const adsStore = create<BaseStore<Ad>>()(
 					isLoading: false,
 				}),
 
-			addItem: (item: Ads) =>
+			addItem: (item: Ad) =>
 				set((state) => ({
 					items: [...state.items, item],
 				})),
