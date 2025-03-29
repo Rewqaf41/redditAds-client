@@ -1,6 +1,6 @@
 "use client"
+import { useFilteredAndSortedItems } from "@/hooks/useFilteredAndSortedItems"
 import { groupStore } from "@/store/group/group.store"
-import { Group, MetricsType } from "@/store/types"
 import {
 	ArrowDownAZ,
 	ArrowDownNarrowWide,
@@ -23,28 +23,12 @@ export function Groups() {
 		isLoading,
 	} = groupStore()
 
-	const filteredGroups = items.filter((group: Group) =>
-		group.name.toLowerCase().includes(searchQuery.toLowerCase())
+	const sortedGroups = useFilteredAndSortedItems(
+		items,
+		searchQuery,
+		sortKey,
+		sortOrder
 	)
-
-	const sortedGroups = [...filteredGroups].sort((a, b) => {
-		if (sortKey === "name") {
-			return sortOrder === "asc"
-				? a.name.localeCompare(b.name)
-				: b.name.localeCompare(a.name)
-		}
-
-		const key = sortKey as keyof MetricsType
-		const getNumericValue = (value: string) => {
-			const cleanedValue = value.replace(/[^0-9.]/g, "")
-			return parseFloat(cleanedValue) || 0
-		}
-
-		const valueA = getNumericValue(a.metrics[0][key])
-		const valueB = getNumericValue(b.metrics[0][key])
-
-		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
-	})
 
 	if (isLoading) {
 		return (
@@ -187,7 +171,7 @@ export function Groups() {
 				</thead>
 				<tbody>
 					{sortedGroups.map((group) => {
-						const metrics = group.metrics[0]
+						const metrics = group.metrics?.[0] || {}
 						const isSelected = selectedItems.includes(group.name)
 
 						return (

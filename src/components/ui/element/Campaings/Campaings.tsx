@@ -1,6 +1,6 @@
 "use client"
+import { useFilteredAndSortedItems } from "@/hooks/useFilteredAndSortedItems"
 import { campaingsStore } from "@/store/campaing/campaings.store"
-import { Campaing, MetricsType } from "@/store/types"
 import {
 	ArrowDownAZ,
 	ArrowDownNarrowWide,
@@ -23,28 +23,12 @@ export function Campaings() {
 		isLoading,
 	} = campaingsStore()
 
-	const filteredСampaings = items.filter((campaing: Campaing) =>
-		campaing.name.toLowerCase().includes(searchQuery.toLowerCase())
+	const sortedCampaings = useFilteredAndSortedItems(
+		items,
+		searchQuery,
+		sortKey,
+		sortOrder
 	)
-
-	const sortedCampaings = [...filteredСampaings].sort((a, b) => {
-		if (sortKey === "name") {
-			return sortOrder === "asc"
-				? a.name.localeCompare(b.name)
-				: b.name.localeCompare(a.name)
-		}
-
-		const key = sortKey as keyof MetricsType
-		const getNumericValue = (value: string) => {
-			const cleanedValue = value.replace(/[^0-9.]/g, "")
-			return parseFloat(cleanedValue) || 0
-		}
-
-		const valueA = getNumericValue(a.metrics[0][key])
-		const valueB = getNumericValue(b.metrics[0][key])
-
-		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
-	})
 
 	if (isLoading) {
 		return (
@@ -187,7 +171,7 @@ export function Campaings() {
 				</thead>
 				<tbody>
 					{sortedCampaings.map((campaing) => {
-						const metrics = campaing.metrics[0]
+						const metrics = campaing.metrics?.[0] || {}
 						const isSelected = selectedItems.includes(campaing.name)
 
 						return (

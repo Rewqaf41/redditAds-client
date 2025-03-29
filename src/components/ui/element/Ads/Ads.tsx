@@ -1,6 +1,6 @@
 "use client"
+import { useFilteredAndSortedItems } from "@/hooks/useFilteredAndSortedItems"
 import { adsStore } from "@/store/ads/ads.store"
-import { Ad, MetricsType } from "@/store/types"
 import {
 	ArrowDownAZ,
 	ArrowDownNarrowWide,
@@ -23,28 +23,12 @@ export function Ads() {
 		isLoading,
 	} = adsStore()
 
-	const filteredAds = items.filter((ad: Ad) =>
-		ad.name.toLowerCase().includes(searchQuery.toLowerCase())
+	const sortedAds = useFilteredAndSortedItems(
+		items,
+		searchQuery,
+		sortKey,
+		sortOrder
 	)
-
-	const sortedAds = [...filteredAds].sort((a, b) => {
-		if (sortKey === "name") {
-			return sortOrder === "asc"
-				? a.name.localeCompare(b.name)
-				: b.name.localeCompare(a.name)
-		}
-
-		const key = sortKey as keyof MetricsType
-		const getNumericValue = (value: string) => {
-			const cleanedValue = value.replace(/[^0-9.]/g, "")
-			return parseFloat(cleanedValue) || 0
-		}
-
-		const valueA = getNumericValue(a.metrics[0][key])
-		const valueB = getNumericValue(b.metrics[0][key])
-
-		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
-	})
 
 	if (isLoading) {
 		return (
@@ -55,7 +39,7 @@ export function Ads() {
 	}
 
 	return (
-		<div className='overflow-x-auto mb-6'>
+		<div className='mb-6'>
 			<table className='min-w-full table-auto'>
 				<thead>
 					<tr className='bg-[#0d121f]'>
@@ -187,7 +171,7 @@ export function Ads() {
 				</thead>
 				<tbody>
 					{sortedAds.map((ad) => {
-						const metrics = ad.metrics[0]
+						const metrics = ad?.metrics?.[0] || {}
 						const isSelected = selectedItems.includes(ad.name)
 
 						return (
