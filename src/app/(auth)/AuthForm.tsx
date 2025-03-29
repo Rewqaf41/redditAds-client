@@ -15,6 +15,7 @@ import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth"
 import { getAccessToken } from "@/services/auth/auth.helper"
 import authService from "@/services/auth/auth.service"
+import { cn } from "@/utils/tw-merge"
 import { useEffect } from "react"
 import styles from "./AuthForm.module.scss"
 
@@ -29,6 +30,7 @@ export function AuthForm({ isLogin }: AuthFormProps) {
 		reset,
 		formState: { errors, isValid },
 	} = useForm<TypeLoginSchema>({
+		mode: "onChange",
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			username: "",
@@ -57,7 +59,7 @@ export function AuthForm({ isLogin }: AuthFormProps) {
 			toast.success("Успешный вход")
 		},
 		onError() {
-			toast.error("Вход не удался")
+			toast.error("Неверный логин или пароль")
 		},
 	})
 
@@ -104,7 +106,12 @@ export function AuthForm({ isLogin }: AuthFormProps) {
 						)}
 					/>
 				</label>
-				<p className='text-red-500 text-sm min-h-[20px] mt-1'>
+				<p
+					className={cn(
+						"text-red-500 text-sm min-h-[10px] mt-1",
+						styles["error-message"]
+					)}
+				>
 					{errors.username?.message}
 				</p>
 			</div>
