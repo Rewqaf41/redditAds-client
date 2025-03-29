@@ -1,5 +1,7 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+import { adsStore } from '../ads/ads.store'
+import { groupStore } from '../group/group.store'
 import { BaseStore, Campaing } from "../types"
 
 export const campaingsStore = create<BaseStore<Campaing>>()(
@@ -12,19 +14,20 @@ export const campaingsStore = create<BaseStore<Campaing>>()(
       sortOrder: "asc",
       isLoading: true,
 
-      setItems: (items) =>
-        set({
-          items: items.map((campaing) => ({
-            ...campaing,
-            createdBy: campaing.createdBy || [],
-          })),
-          isLoading: false,
-        }),
+      setItems: (item) => set({items: item, isLoading: false}),
 
         addItem: (item: Campaing) =>
           set((state) => ({
             items: [...state.items, item],
           })),
+
+          updateItem: (name: string, updatedData: Partial<Campaing>) =>
+            set((state) => ({
+              items: state.items.map((campaing) =>
+                campaing.name === name ? { ...campaing, ...updatedData } : campaing
+              ),
+            })),
+
 
       toggleItemSelection: (name) =>
         set((state) => ({
@@ -51,12 +54,44 @@ export const campaingsStore = create<BaseStore<Campaing>>()(
         })),
 
       deleteSelectedItems: () =>
-        set((state) => ({
-          items: state.items.filter(
-            (campaing) => !state.selectedItems.includes(campaing.name)
-          ),
-          selectedItems: [],
-        })),
+        set((state) => {
+          const campaignsToDelete = state.selectedItems;
+      
+          const newCampaigns = state.items.filter(
+            (campaign) => !campaignsToDelete.includes(campaign.name)
+          );
+      
+          groupStore.setState((gState) => {
+            const updatedGroup = gState.items
+              .map((group) => ({
+                ...group,
+                campaigns: group.campaigns.filter(
+                  (campaign) => !campaignsToDelete.includes(campaign)
+                ),
+              }))
+              .filter((group) => group.campaigns.length > 0);
+      
+            return { items: updatedGroup };
+          });
+          
+          const activeGroups = groupStore.getState().items.map((g) => g.name);
+
+        adsStore.setState((aState) => {
+          const updatedAds = aState.items
+            .map((ad) => ({
+              ...ad,
+              groups: ad.groups.filter((group) => activeGroups.includes(group)),
+            }))
+            .filter((ad) => ad.groups.length > 0);
+
+          return { items: updatedAds };
+        });
+      
+          return {
+            items: newCampaigns,
+            selectedItems: [],
+          };
+        }),
 
       addCreatorToCampaign: (campaignName: string, username: string) =>
         set((state) => ({

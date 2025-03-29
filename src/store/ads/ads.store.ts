@@ -26,6 +26,13 @@ export const adsStore = create<BaseStore<Ad>>()(
 					items: [...state.items, item],
 				})),
 
+				updateItem: (name: string, updatedData: Partial<Ad>) =>
+					set((state) => ({
+						items: state.items.map((ad) =>
+							ad.name === name ? { ...ad, ...updatedData } : ad
+						),
+					})),
+
 			toggleItemSelection: (name) =>
 				set((state) => ({
 					selectedItems: state.selectedItems.includes(name)

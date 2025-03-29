@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { adsStore } from '../ads/ads.store'
 import { BaseStore, Group } from '../types'
 
 export const groupStore = create<BaseStore<Group>>()(
@@ -26,6 +27,13 @@ export const groupStore = create<BaseStore<Group>>()(
           items: [...state.items, item],
         })),
 
+        updateItem: (name: string, updatedData: Partial<Group>) =>
+          set((state) => ({
+            items: state.items.map((group) =>
+              group.name === name ? { ...group, ...updatedData } : group
+            ),
+          })),
+
       toggleItemSelection: (name) =>
         set((state) => ({
           selectedItems: state.selectedItems.includes(name)
@@ -51,12 +59,31 @@ export const groupStore = create<BaseStore<Group>>()(
         })),
 
       deleteSelectedItems: () =>
-        set((state) => ({
-          items: state.items.filter(
-            (group) => !state.selectedItems.includes(group.name)
-          ),
+        set((state) => {
+          const groupsToDelete = state.selectedItems;
+
+          const newGroups = state.items.filter(
+            (group) => !groupsToDelete.includes(group.name)
+          );
+
+          adsStore.setState((aState) => {
+            const updatedGroup = aState.items
+              .map((ad) => ({
+                ...ad,
+                groups: ad.groups.filter(
+                  (group) => !groupsToDelete.includes(group)
+                ),
+              }))
+              .filter((ad) => ad.groups.length > 0);
+      
+            return { items: updatedGroup };
+          });
+    
+        return {
+          items: newGroups,
           selectedItems: [],
-        })),
+        };
+        }),
 
       addCampaignToGroup: (groupName: string, campaignName: string) =>
         set((state) => ({
