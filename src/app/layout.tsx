@@ -16,7 +16,6 @@ import { Providers } from "./Providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
-// Тип для сторов из zustand
 type ZustandStore<T> = UseBoundStore<StoreApi<BaseStore<T>>>
 
 type StoreMap = {
@@ -50,19 +49,18 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={inter.className}>
-				<Providers>
-					<div className='flex'>
-						{/* <Sidebar /> */}
-						<div className='flex-1'>
-							<SearchProvider store={currentStore}>
+				<SearchProvider store={currentStore}>
+					<Providers>
+						<div className='flex'>
+							<div className='flex-1'>
 								<Header />
 								<Subheader />
 								{children}
 								<Toaster position='bottom-right' />
-							</SearchProvider>
+							</div>
 						</div>
-					</div>
-				</Providers>
+					</Providers>
+				</SearchProvider>
 			</body>
 		</html>
 	)
