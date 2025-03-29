@@ -4,9 +4,11 @@ export interface ICommonRequest {
 }
 
 export interface ICampingData {
+	accounts: string[]
 	name: string
 	objective: string
 	spend_cap: string
+	status?: string
 }
 
 export interface IGroupData {
@@ -31,6 +33,7 @@ export interface IGroupData {
 	end_time?: string | null
 
 	campaings: string[]
+	status?: string
 }
 
 export interface IAdData {
@@ -41,6 +44,7 @@ export interface IAdData {
   allow_comments: boolean
 
 	groups: string[]
+	status?: string
 }
 
 export interface IAccountData {
