@@ -1,5 +1,4 @@
 "use client"
-
 import { accountStore } from "@/store/account/account.store"
 import { Account, MetricsType } from "@/store/types"
 import {
@@ -41,8 +40,8 @@ export function Accounts() {
 			return parseFloat(cleanedValue) || 0
 		}
 
-		const valueA = getNumericValue(a.metrics[0][key])
-		const valueB = getNumericValue(b.metrics[0][key])
+		const valueA = getNumericValue(a.metrics?.[0][key] || "")
+		const valueB = getNumericValue(b.metrics?.[0][key] || "")
 
 		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
 	})
