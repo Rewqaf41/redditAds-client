@@ -6,6 +6,7 @@ export interface BaseStore<T> {
   sortOrder: 'asc' | 'desc';
   isLoading: boolean;
   setItems: (items: T[]) => void;
+  updateItem: (name: string, item: T) => void;
   addItem: (item: T) => void;
   toggleItemSelection: (id: string) => void;
   toggleAllSelection: () => void;
@@ -24,29 +25,29 @@ export interface Account {
 export interface Campaing {
 	name: string;
 	status: string;
-	metrics: MetricsType[];
+	metrics?: MetricsType[];
   createdBy: string[];
 }
 
 export interface Group {
   name: string;
   status: string;
-  metrics: MetricsType[];
+  metrics?: MetricsType[];
   campaigns: string[];
 }
 
 export interface Ad {
   name: string;
   status: string;
-  metrics: MetricsType[];
+  metrics?: MetricsType[];
   groups: string[];
 }
 
 export interface MetricsType {
-  impressions: string
-  spend: string
-  clicks: string
-  ecpm: string
-  cpc: string
-  ctr: string
+  impressions?: string
+  spend?: string
+  clicks?: string
+  ecpm?: string
+  cpc?: string
+  ctr?: string
 }
