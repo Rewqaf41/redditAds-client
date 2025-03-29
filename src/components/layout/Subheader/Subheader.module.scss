@@ -1,5 +1,5 @@
 .subheader {
-	@apply bg-[#101727] h-14;
+	@apply bg-[#101727] h-14 sticky top-10 z-10;
 
 	.containers {
 		@apply container mx-auto py-2;
@@ -8,6 +8,6 @@
 		@apply flex items-center h-10 justify-end left-0;
 	}
 	.search {
-		@apply ml-6 border-gray-600 border-2 rounded-lg w-72 py-1 px-2;
+		@apply ml-6 mr-5 border-gray-600 border-2 rounded-lg w-72 py-1 px-2;
 	}
 }
