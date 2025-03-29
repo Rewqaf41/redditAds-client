@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { FaUserPlus } from "react-icons/fa"
-import AddAccount from "../AddAccount/AddAccount"
+import AddAccount from "../Accounts/AddAccount/AddAccount"
 import styles from "./ButtonOpen.module.scss"
 
 export function ButtonOpen() {
