@@ -4,7 +4,7 @@ import { Groups } from "@/components/ui/element/Group/Group"
 import { NO_INDEX_PAGE } from "@/constants/seo.constants"
 
 export const metadata: Metadata = {
-	title: "",
+	title: "Группы",
 	...NO_INDEX_PAGE,
 }
 
