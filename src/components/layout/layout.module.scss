@@ -1,6 +1,10 @@
 .layout {
-	@apply h-full;
-	display: grid;
-	grid-template-columns: 1fr 20fr;
-	overscroll-behavior: none;
+    @apply h-full;
+    display: grid;
+    grid-template-columns: 1fr 20fr;
+    overscroll-behavior: none;
+}
+
+.content {
+    @apply w-full h-full overflow-y-auto;
 }

@@ -54,7 +54,7 @@ export default function RootLayout({
 						<div className='flex'>
 							<div className='flex-1'>
 								<Header />
-								<Subheader />
+								{pathname !== "/statistics" ? <Subheader /> : null}
 								{children}
 								<Toaster position='bottom-right' />
 							</div>
