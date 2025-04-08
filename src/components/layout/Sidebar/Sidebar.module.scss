@@ -1,5 +1,5 @@
 .sidebar {
-	@apply flex bg-[#202938] items-center flex-col justify-between border-r border-border py-layout w-[65px] sticky top-0 z-30;
+	@apply flex bg-[#202938] items-center flex-col justify-between border-r border-border py-layout sticky top-0 z-30 w-full;
 	height: 100vh;
 	overflow-y: auto;
 
