@@ -68,7 +68,12 @@ export function HorizontalBarChart() {
 					})),
 			]
 
-			// Обрезаем названия до 12 символов
+			items = items.filter(({ metrics }) => {
+				const { impressions, spend, idealImpressions } =
+					calculateMetrics(metrics)
+				return impressions > 0 || spend > 0 || idealImpressions > 0
+			})
+
 			const labels = items.map((item) =>
 				item.name.length > 15 ? `${item.name.slice(0, 15)}...` : item.name
 			)
@@ -119,7 +124,7 @@ export function HorizontalBarChart() {
 			},
 			title: {
 				display: true,
-				text: "Метрики: Spend, Impressions и Ideal Impressions",
+				text: "Метрики: Расхода, Показов и Идеального кол-ва показов",
 			},
 			tooltip: {
 				callbacks: {

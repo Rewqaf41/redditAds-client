@@ -71,37 +71,42 @@ export function DoughnutChart() {
 		return [impressions, spend, clicks]
 	}
 
-	const individualCharts = allSelectedItems.map(({ type, name, metrics }) => {
-		const individualMetricsData = calculateMetrics(metrics)
-		const individualLabels = [
-			`Показы (${individualMetricsData[0]})`,
-			`Расход (${individualMetricsData[1]})`,
-			`Клики (${individualMetricsData[2]})`,
-		]
+	const individualCharts = allSelectedItems
+		.filter(({ metrics }) => {
+			const [impressions, spend, clicks] = calculateMetrics(metrics)
+			return impressions > 0 || spend > 0 || clicks > 0
+		})
+		.map(({ type, name, metrics }) => {
+			const individualMetricsData = calculateMetrics(metrics)
+			const individualLabels = [
+				`Показы (${individualMetricsData[0]})`,
+				`Расход (${individualMetricsData[1]})`,
+				`Клики (${individualMetricsData[2]})`,
+			]
 
-		return {
-			title: `${type}: ${name}`,
-			data: {
-				labels: individualLabels,
-				datasets: [
-					{
-						data: individualMetricsData,
-						backgroundColor: [
-							"rgba(75, 192, 192, 0.6)",
-							"rgba(255, 99, 132, 0.6)",
-							"rgba(54, 162, 235, 0.6)",
-						],
-						borderColor: [
-							"rgba(75, 192, 192, 1)",
-							"rgba(255, 99, 132, 1)",
-							"rgba(54, 162, 235, 1)",
-						],
-						borderWidth: 1,
-					},
-				],
-			},
-		}
-	})
+			return {
+				title: `${type}: ${name}`,
+				data: {
+					labels: individualLabels,
+					datasets: [
+						{
+							data: individualMetricsData,
+							backgroundColor: [
+								"rgba(75, 192, 192, 0.6)",
+								"rgba(255, 99, 132, 0.6)",
+								"rgba(54, 162, 235, 0.6)",
+							],
+							borderColor: [
+								"rgba(75, 192, 192, 1)",
+								"rgba(255, 99, 132, 1)",
+								"rgba(54, 162, 235, 1)",
+							],
+							borderWidth: 1,
+						},
+					],
+				},
+			}
+		})
 
 	return (
 		<div className='text-center'>
@@ -114,6 +119,11 @@ export function DoughnutChart() {
 								data={data}
 								options={{
 									maintainAspectRatio: false,
+									plugins: {
+										legend: {
+											position: "bottom",
+										},
+									},
 								}}
 							/>
 						</div>
