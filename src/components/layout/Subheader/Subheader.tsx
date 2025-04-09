@@ -14,11 +14,17 @@ import styles from "./Subheader.module.scss"
 
 export function Subheader() {
 	const [isEditing, setIsEditing] = useState<boolean>(false)
+	const [isModalOpen, setIsModalOpen] = useState<boolean>(false) // Состояние для модального окна
 
 	const { isAuth } = useAuth()
 	const pathname = usePathname()
 	const { searchQuery, setSearchQuery, selectedItems, deleteSelectedItems } =
 		useSearchContext()
+
+	const handleDelete = () => {
+		deleteSelectedItems()
+		setIsModalOpen(false)
+	}
 
 	if (!isAuth) return null
 
@@ -41,7 +47,7 @@ export function Subheader() {
 									<Pencil className='hover:opacity-50' />
 								</button>
 							)}
-							<button onClick={deleteSelectedItems}>
+							<button onClick={() => setIsModalOpen(true)}>
 								<Trash2 className='hover:text-red-600 transition-colors duration-300 ease-in-out' />
 							</button>
 						</div>
@@ -75,6 +81,29 @@ export function Subheader() {
 					/>
 				</div>
 			</div>
+
+			{/* Модальное окно */}
+			{isModalOpen && (
+				<div className={styles.modal}>
+					<div className={styles.modal_container}>
+						<h2 className={styles.modal_title}>Подтверждение удаления</h2>
+						<p className='text-white mb-4'>
+							Вы уверены, что хотите удалить выбранные элементы?
+						</p>
+						<div className={styles.buttons_group}>
+							<button className={styles.button_confirm} onClick={handleDelete}>
+								Удалить
+							</button>
+							<button
+								className={styles.button_cancel}
+								onClick={() => setIsModalOpen(false)}
+							>
+								Отмена
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }
