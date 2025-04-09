@@ -1,10 +1,6 @@
 .layout {
-    @apply h-full;
+    @apply h-screen overflow-y-auto;
     display: grid;
     grid-template-columns: 1fr 20fr;
     overscroll-behavior: none;
-}
-
-.content {
-    @apply w-full h-full overflow-y-auto;
 }
