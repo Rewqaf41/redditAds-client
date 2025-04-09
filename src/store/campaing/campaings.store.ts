@@ -43,6 +43,7 @@ export const campaingsStore = create<BaseStore<Campaing>>()(
               ? []
               : state.items.map((campaing) => campaing.name),
         })),
+        unselectAll: () => set({ selectedItems: [] }),
 
       setSearchQuery: (query) => set({ searchQuery: query }),
 

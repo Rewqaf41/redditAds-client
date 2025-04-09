@@ -47,6 +47,7 @@ export const adsStore = create<BaseStore<Ad>>()(
 							? []
 							: state.items.map((ad) => ad.name),
 				})),
+				unselectAll: () => set({ selectedItems: [] }),
 
 			setSearchQuery: (query) => set({ searchQuery: query }),
 

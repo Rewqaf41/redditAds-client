@@ -43,6 +43,7 @@ export const accountStore = create<BaseStore<Account>>()(
               ? []
               : state.items.map((account) => account.username),
         })),
+        unselectAll: () => set({ selectedItems: [] }),
       
       setSearchQuery: (query) => set({ searchQuery: query }),
       

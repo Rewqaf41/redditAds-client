@@ -10,6 +10,7 @@ export interface BaseStore<T> {
   addItem: (item: T) => void;
   toggleItemSelection: (id: string) => void;
   toggleAllSelection: () => void;
+  unselectAll: () => void;
   setSearchQuery: (query: string) => void;
   setSortKey: (key: string) => void;
   deleteSelectedItems: () => void;

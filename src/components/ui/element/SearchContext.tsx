@@ -7,6 +7,7 @@ interface SearchContextValue {
 	searchQuery: string
 	setSearchQuery: (query: string) => void
 	selectedItems: string[]
+	unselectAll: () => void
 	deleteSelectedItems: () => void
 }
 
@@ -14,6 +15,7 @@ const SearchContext = createContext<SearchContextValue>({
 	searchQuery: "",
 	setSearchQuery: () => {},
 	selectedItems: [],
+	unselectAll: () => {},
 	deleteSelectedItems: () => {},
 })
 
@@ -24,14 +26,20 @@ export function SearchProvider<T>({
 	children: ReactNode
 	store: UseBoundStore<StoreApi<BaseStore<T>>>
 }) {
-	const { searchQuery, setSearchQuery, selectedItems, deleteSelectedItems } =
-		store()
+	const {
+		searchQuery,
+		setSearchQuery,
+		unselectAll,
+		selectedItems,
+		deleteSelectedItems,
+	} = store()
 
 	const value = {
 		searchQuery,
 		setSearchQuery,
 		selectedItems,
 		deleteSelectedItems,
+		unselectAll,
 	}
 
 	return (

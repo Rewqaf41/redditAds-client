@@ -48,6 +48,7 @@ export const groupStore = create<BaseStore<Group>>()(
               ? []
               : state.items.map((group) => group.name),
         })),
+      unselectAll: () => set({ selectedItems: [] }),
 
       setSearchQuery: (query) => set({ searchQuery: query }),
 
