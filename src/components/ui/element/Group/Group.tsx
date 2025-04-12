@@ -28,12 +28,13 @@ export function Groups() {
 	const [isSkeletonLoading, setIsSkeletonLoading] = useState(true)
 
 	useEffect(() => {
+		setIsSkeletonLoading(true)
 		const timer = setTimeout(() => {
 			setIsSkeletonLoading(false)
 		}, 1500)
 
 		return () => clearTimeout(timer)
-	}, [])
+	}, [items.length])
 
 	const sortedGroups = useFilteredAndSortedItems(
 		items,
