@@ -102,8 +102,8 @@ export function AreaChart() {
 						{
 							label: "Метрики",
 							data: individualMetricsData,
-							backgroundColor: "rgba(75, 192, 192, 0.2)",
-							borderColor: "rgba(75, 192, 192, 1)",
+							backgroundColor: "rgba(64, 193, 150, 0.2)",
+							borderColor: "rgba(64, 193, 150, 1)",
 							borderWidth: 2,
 							fill: true,
 						},
