@@ -63,7 +63,7 @@ export function EditAds({ isOpen, onClose }: WindowComponentProps) {
 	const onSubmit = (data: IAdData) => {
 		updateItem(selectedAd?.name || "", {
 			name: data.name,
-			status: "active",
+			status: data.status || "active",
 			groups: data.groups,
 		})
 		toast.success("Рекламма создана")

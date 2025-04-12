@@ -68,7 +68,7 @@ export function EditGroup({ isOpen, onClose }: WindowComponentProps) {
 	const onSubmit = (data: IGroupData) => {
 		updateItem(selectedGroup?.name || "", {
 			name: data.name,
-			status: "active",
+			status: data.status || "active",
 			campaigns: data.campaings,
 		})
 		toast.success("Группы обновлена")
