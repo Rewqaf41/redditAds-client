@@ -1,5 +1,5 @@
 .modal {
-  @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm;
+  @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-10;
 }
 
 .modal_container {
@@ -69,6 +69,7 @@
   &:disabled {
     @apply bg-gray-500 cursor-not-allowed;
   }
+  color: white !important;
 }
 
 .button_add_wrapper {

@@ -1,22 +1,46 @@
 .sidebar {
-	@apply flex bg-[#202938] items-center flex-col justify-between border-r border-border py-layout sticky top-0 z-30 w-full;
-	height: 100vh;
-	overflow-y: auto;
+    @apply flex bg-[#202938] items-center flex-col justify-between border-r border-border py-layout sticky top-0 z-30 w-full;
+    height: 100vh;
+    overflow-y: auto;
 
-	.logo {
-		@apply flex items-center justify-center bg-orange-500 rounded-full w-8 h-8;
-	}
-	a {
-		&.active > svg {
-			@apply text-white
-		}
-	}
+    .logo {
+        @apply flex items-center justify-center bg-orange-500 rounded-full w-8 h-8;
+    }
+    a {
+        &.active > svg {
+            @apply text-white;
+        }
+    }
 
-	svg {
-		@apply text-[#6b7280] duration-300 ease-in-out transition-colors;
+    .icon {
+        @apply text-[#6b7280] duration-300 ease-in-out transition-colors;
 
-		&:hover {
-			@apply text-white;
-		}
-	}
+        &:hover {
+            @apply text-white;
+        }
+    }
+}
+
+.modal {
+    @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50;
+}
+
+.modal_container {
+    @apply bg-gray-900 border-2 border-neutral-700 rounded-md shadow-lg p-6 w-96;
+}
+
+.modal_title {
+    @apply text-white text-lg font-bold mb-4;
+}
+
+.buttons_group {
+    @apply flex justify-end gap-4;
+}
+
+.button_confirm {
+    @apply bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600;
+}
+
+.button_cancel {
+    @apply bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600;
 }
