@@ -7,7 +7,9 @@ import {
 	ArrowDownWideNarrow,
 	ArrowDownZA,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Checkbox } from "../../common/Checkbox"
+import { Skeleton } from "../../common/Skeleton"
 import { StatusBadge } from "../Badges/StatusBadge"
 
 export function Groups() {
@@ -22,6 +24,16 @@ export function Groups() {
 		setSortKey,
 		isLoading,
 	} = groupStore()
+
+	const [isSkeletonLoading, setIsSkeletonLoading] = useState(true)
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIsSkeletonLoading(false)
+		}, 1500)
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	const sortedGroups = useFilteredAndSortedItems(
 		items,
@@ -170,51 +182,85 @@ export function Groups() {
 					</tr>
 				</thead>
 				<tbody>
-					{sortedGroups.map((group) => {
-						const metrics = group.metrics?.[0] || {}
-						const isSelected = selectedItems.includes(group.name)
+					{isLoading || isSkeletonLoading
+						? [...Array(items.length)].map((_, index) => (
+								<tr key={index}>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-6 mx-auto' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-40' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+								</tr>
+						  ))
+						: sortedGroups.map((group) => {
+								const metrics = group.metrics?.[0] || {}
+								const isSelected = selectedItems.includes(group.name)
 
-						return (
-							<tr
-								key={group.name}
-								className={
-									isSelected
-										? "bg-gray-200/20 cursor-pointer"
-										: "cursor-pointer"
-								}
-								onClick={() => toggleItemSelection(group.name)}
-							>
-								<td
-									className='py-2 px-4 text-center'
-									onClick={(e) => e.stopPropagation()}
-								>
-									<Checkbox
-										checked={isSelected}
-										onCheckedChange={() => toggleItemSelection(group.name)}
-									/>
-								</td>
-								<td className='py-2 px-4 text-left'>
-									<div>
-										{group.name}
-										<span className='text-sm opacity-70 flex flex-wrap'>
-											{Array.isArray(group.campaigns)
-												? group.campaigns.join(", ")
-												: group.campaigns}
-										</span>
-									</div>
-								</td>
-								<td className='py-2 text-left'>
-									<StatusBadge status={group.status} />
-								</td>
-								<td className='py-2 px-4 text-left'>{metrics.impressions}</td>
-								<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
-								<td className='py-2 text-left'>{metrics.clicks}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
-								<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
-							</tr>
-						)
-					})}
+								return (
+									<tr
+										key={group.name}
+										className={
+											isSelected
+												? "bg-gray-200/20 cursor-pointer"
+												: "cursor-pointer"
+										}
+										onClick={() => toggleItemSelection(group.name)}
+									>
+										<td
+											className='py-2 px-4 text-center'
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Checkbox
+												checked={isSelected}
+												onCheckedChange={() => toggleItemSelection(group.name)}
+											/>
+										</td>
+										<td className='py-2 px-4 text-left'>
+											<div>
+												{group.name}
+												<span className='text-sm opacity-70 flex flex-wrap'>
+													{Array.isArray(group.campaigns)
+														? group.campaigns.join(", ")
+														: group.campaigns}
+												</span>
+											</div>
+										</td>
+										<td className='py-2 text-left'>
+											<StatusBadge status={group.status} />
+										</td>
+										<td className='py-2 px-4 text-left'>
+											{metrics.impressions}
+										</td>
+										<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
+										<td className='py-2 text-left'>{metrics.clicks}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
+										<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
+									</tr>
+								)
+						  })}
 				</tbody>
 			</table>
 		</div>

@@ -7,7 +7,9 @@ import {
 	ArrowDownWideNarrow,
 	ArrowDownZA,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Checkbox } from "../../common/Checkbox"
+import { Skeleton } from "../../common/Skeleton"
 import { StatusBadge } from "../Badges/StatusBadge"
 
 export function Ads() {
@@ -22,6 +24,16 @@ export function Ads() {
 		setSortKey,
 		isLoading,
 	} = adsStore()
+
+	const [isSkeletonLoading, setIsSkeletonLoading] = useState(true)
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIsSkeletonLoading(false)
+		}, 1500)
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	const sortedAds = useFilteredAndSortedItems(
 		items,
@@ -170,51 +182,85 @@ export function Ads() {
 					</tr>
 				</thead>
 				<tbody>
-					{sortedAds.map((ad) => {
-						const metrics = ad?.metrics?.[0] || {}
-						const isSelected = selectedItems.includes(ad.name)
+					{isLoading || isSkeletonLoading
+						? [...Array(items.length)].map((_, index) => (
+								<tr key={index}>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-6 mx-auto' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-72' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+								</tr>
+						  ))
+						: sortedAds.map((ad) => {
+								const metrics = ad?.metrics?.[0] || {}
+								const isSelected = selectedItems.includes(ad.name)
 
-						return (
-							<tr
-								key={ad.name}
-								className={
-									isSelected
-										? "bg-gray-200/20 cursor-pointer"
-										: "cursor-pointer"
-								}
-								onClick={() => toggleItemSelection(ad.name)}
-							>
-								<td
-									className='py-2 px-4 text-center'
-									onClick={(e) => e.stopPropagation()}
-								>
-									<Checkbox
-										checked={isSelected}
-										onCheckedChange={() => toggleItemSelection(ad.name)}
-									/>
-								</td>
-								<td className='py-2 px-4 text-left'>
-									<div>
-										{ad.name}
-										<span className='text-sm opacity-70 flex flex-wrap'>
-											{Array.isArray(ad.groups)
-												? ad.groups.join(", ")
-												: ad.groups}
-										</span>
-									</div>
-								</td>
-								<td className='py-2 text-left'>
-									<StatusBadge status={ad.status} />
-								</td>
-								<td className='py-2 px-4 text-left'>{metrics.impressions}</td>
-								<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
-								<td className='py-2 text-left'>{metrics.clicks}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
-								<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
-							</tr>
-						)
-					})}
+								return (
+									<tr
+										key={ad.name}
+										className={
+											isSelected
+												? "bg-gray-200/20 cursor-pointer"
+												: "cursor-pointer"
+										}
+										onClick={() => toggleItemSelection(ad.name)}
+									>
+										<td
+											className='py-2 px-4 text-center'
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Checkbox
+												checked={isSelected}
+												onCheckedChange={() => toggleItemSelection(ad.name)}
+											/>
+										</td>
+										<td className='py-2 px-4 text-left'>
+											<div>
+												{ad.name}
+												<span className='text-sm opacity-70 flex flex-wrap'>
+													{Array.isArray(ad.groups)
+														? ad.groups.join(", ")
+														: ad.groups}
+												</span>
+											</div>
+										</td>
+										<td className='py-2 text-left'>
+											<StatusBadge status={ad.status} />
+										</td>
+										<td className='py-2 px-4 text-left'>
+											{metrics.impressions}
+										</td>
+										<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
+										<td className='py-2 text-left'>{metrics.clicks}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
+										<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
+									</tr>
+								)
+						  })}
 				</tbody>
 			</table>
 		</div>

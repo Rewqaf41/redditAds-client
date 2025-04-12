@@ -7,7 +7,9 @@ import {
 	ArrowDownWideNarrow,
 	ArrowDownZA,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Checkbox } from "../../common/Checkbox"
+import { Skeleton } from "../../common/Skeleton"
 import { StatusBadge } from "../Badges/StatusBadge"
 
 export function Accounts() {
@@ -22,6 +24,16 @@ export function Accounts() {
 		setSortKey,
 		isLoading,
 	} = accountStore()
+
+	const [isSkeletonLoading, setIsSkeletonLoading] = useState(true)
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setIsSkeletonLoading(false)
+		}, 1500)
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	const filteredAccounts = items.filter((account: Account) =>
 		account.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -45,14 +57,6 @@ export function Accounts() {
 
 		return sortOrder === "asc" ? valueA - valueB : valueB - valueA
 	})
-
-	if (isLoading) {
-		return (
-			<div className='flex items-center justify-center h-64'>
-				<div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900'></div>
-			</div>
-		)
-	}
 
 	return (
 		<div className='overflow-x-auto mb-6'>
@@ -186,44 +190,78 @@ export function Accounts() {
 					</tr>
 				</thead>
 				<tbody>
-					{sortedAccounts.map((account) => {
-						const metrics = account.metrics[0]
-						const isSelected = selectedItems.includes(account.username)
+					{isLoading || isSkeletonLoading
+						? [...Array(items.length)].map((_, index) => (
+								<tr key={index}>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-6 mx-auto' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-24' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-20' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+									<td className='py-2 px-4'>
+										<Skeleton className='h-4 w-16' />
+									</td>
+								</tr>
+						  ))
+						: sortedAccounts.map((account) => {
+								const metrics = account.metrics[0]
+								const isSelected = selectedItems.includes(account.username)
 
-						return (
-							<tr
-								key={account.username}
-								className={
-									isSelected
-										? "bg-gray-200/20 cursor-pointer"
-										: "cursor-pointer"
-								}
-								onClick={() => toggleItemSelection(account.username)}
-							>
-								<td
-									className='py-2 px-4 text-center'
-									onClick={(e) => e.stopPropagation()}
-								>
-									<Checkbox
-										checked={isSelected}
-										onCheckedChange={() =>
-											toggleItemSelection(account.username)
+								return (
+									<tr
+										key={account.username}
+										className={
+											isSelected
+												? "bg-gray-200/20 cursor-pointer"
+												: "cursor-pointer"
 										}
-									/>
-								</td>
-								<td className='py-2 px-4 text-left'>{account.username}</td>
-								<td className='py-2 text-left'>
-									<StatusBadge status={account.status} />
-								</td>
-								<td className='py-2 px-4 text-left'>{metrics.impressions}</td>
-								<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
-								<td className='py-2 text-left'>{metrics.clicks}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
-								<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
-								<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
-							</tr>
-						)
-					})}
+										onClick={() => toggleItemSelection(account.username)}
+									>
+										<td
+											className='py-2 px-4 text-center'
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Checkbox
+												checked={isSelected}
+												onCheckedChange={() =>
+													toggleItemSelection(account.username)
+												}
+											/>
+										</td>
+										<td className='py-2 px-4 text-left'>{account.username}</td>
+										<td className='py-2 text-left'>
+											<StatusBadge status={account.status} />
+										</td>
+										<td className='py-2 px-4 text-left'>
+											{metrics.impressions}
+										</td>
+										<td className='py-2 px-4 text-left'>{metrics.spend} USD</td>
+										<td className='py-2 text-left'>{metrics.clicks}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ecpm}</td>
+										<td className='py-2 px-5 text-left'>{metrics.cpc}</td>
+										<td className='py-2 px-5 text-left'>{metrics.ctr}</td>
+									</tr>
+								)
+						  })}
 				</tbody>
 			</table>
 		</div>
