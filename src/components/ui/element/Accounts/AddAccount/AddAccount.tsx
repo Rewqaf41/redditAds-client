@@ -84,7 +84,7 @@ const AddAccount: FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 					const sumFactors = factors.reduce((a, b) => a + b, 0)
 
 					return factors.map((factor) =>
-						Math.round((factor / sumFactors) * num)
+						((factor / sumFactors) * num).toFixed(2)
 					)
 				}
 
