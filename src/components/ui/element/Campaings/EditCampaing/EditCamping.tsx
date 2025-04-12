@@ -102,7 +102,7 @@ export function EditCamping({ isOpen, onClose }: WindowComponentProps) {
 		<div className={styles.modal}>
 			<div className={styles.modal_container}>
 				<div className={styles.modal_title}>
-					<h1 className={styles.title}>Создание кампании</h1>
+					<h1 className={styles.title}>Обновление кампании</h1>
 					<button onClick={onClose} className={styles.button_close}>
 						<IoMdClose />
 					</button>

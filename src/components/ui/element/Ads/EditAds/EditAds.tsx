@@ -66,7 +66,7 @@ export function EditAds({ isOpen, onClose }: WindowComponentProps) {
 			status: data.status || "active",
 			groups: data.groups,
 		})
-		toast.success("Рекламма создана")
+		toast.success("Реклама обновлена")
 		onClose()
 		reset()
 	}
@@ -96,7 +96,7 @@ export function EditAds({ isOpen, onClose }: WindowComponentProps) {
 		<div className={styles.modal}>
 			<div className={styles.modal_container}>
 				<div className={styles.modal_title}>
-					<h1 className={styles.title}>Создание кампании</h1>
+					<h1 className={styles.title}>Обновление рекламы</h1>
 					<button onClick={onClose} className={styles.button_close}>
 						<IoMdClose />
 					</button>
@@ -246,7 +246,7 @@ export function EditAds({ isOpen, onClose }: WindowComponentProps) {
 									disabled={!isValid}
 									className={styles.button_add}
 								>
-									Создать Рекламу
+									Обновить Рекламу
 								</button>
 								<Controller
 									name='status'

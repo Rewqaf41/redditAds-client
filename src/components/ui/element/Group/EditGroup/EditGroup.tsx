@@ -110,7 +110,7 @@ export function EditGroup({ isOpen, onClose }: WindowComponentProps) {
 		<div className={styles.modal}>
 			<div className={styles.modal_container}>
 				<div className={styles.modal_title}>
-					<h1 className={styles.title}>Создание Группы</h1>
+					<h1 className={styles.title}>Обновление Группы</h1>
 					<button onClick={onClose} className={styles.button_close}>
 						<IoMdClose />
 					</button>
@@ -555,7 +555,7 @@ export function EditGroup({ isOpen, onClose }: WindowComponentProps) {
 									disabled={!isValid}
 									className={styles.button_add}
 								>
-									Создать Группу
+									Обновить Группу
 								</button>
 								<Controller
 									name='status'
