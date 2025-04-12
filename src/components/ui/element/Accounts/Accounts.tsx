@@ -28,12 +28,13 @@ export function Accounts() {
 	const [isSkeletonLoading, setIsSkeletonLoading] = useState(true)
 
 	useEffect(() => {
+		setIsSkeletonLoading(true)
 		const timer = setTimeout(() => {
 			setIsSkeletonLoading(false)
 		}, 1500)
 
 		return () => clearTimeout(timer)
-	}, [])
+	}, [items.length])
 
 	const filteredAccounts = items.filter((account: Account) =>
 		account.username.toLowerCase().includes(searchQuery.toLowerCase())
