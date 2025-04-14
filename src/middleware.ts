@@ -8,6 +8,10 @@ export default async function middleware(req: NextRequest) {
 		return NextResponse.redirect(new URL("/login", req.url))
 	}
 
+	if (req.nextUrl.pathname === "/") {
+		return NextResponse.redirect(new URL("/accounts", req.url))
+}
+
 }
 
 export const config = {
