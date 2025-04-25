@@ -1,4 +1,4 @@
-export const NODE_ENV = 'production' as string
+export const NODE_ENV = 'dev' as string
 
 export const AUTH_URL = NODE_ENV === 'dev' ? 'http://localhost:12345/api/v1' : 'https://decomate.ru/api/v1'
 export const REDDIT_URL = NODE_ENV === 'dev' ? 'http://localhost:3002/api/v1' : 'https://decomate.ru/api/v1'

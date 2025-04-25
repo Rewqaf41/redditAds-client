@@ -215,13 +215,13 @@ export function Campaings() {
 									</td>
 								</tr>
 						  ))
-						: sortedCampaings.map((campaing) => {
+						: sortedCampaings.map((campaing, index) => {
 								const metrics = campaing.metrics?.[0] || {}
 								const isSelected = selectedItems.includes(campaing.name)
 
 								return (
 									<tr
-										key={campaing.name}
+										key={`${campaing.name}-${index}`}
 										className={
 											isSelected
 												? "bg-gray-200/20 cursor-pointer"

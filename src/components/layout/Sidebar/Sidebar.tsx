@@ -8,11 +8,19 @@ import { AddGroup } from "@/components/ui/element/Group/AddGroup/AddGroup"
 import { EditGroup } from "@/components/ui/element/Group/EditGroup/EditGroup"
 import { Hint } from "@/components/ui/element/Hint/Hint"
 import { useSearchContext } from "@/components/ui/element/SearchContext"
+import { SettingsModal } from "@/components/ui/element/SettingsModal/SettingsModal"
 import { useAuth } from "@/hooks/useAuth"
 import authService from "@/services/auth/auth.service"
 import { cn } from "@/utils/tw-merge"
 import { useMutation } from "@tanstack/react-query"
-import { BadgePlus, FolderPlus, PenBox, Pencil, Trash2 } from "lucide-react"
+import {
+	BadgePlus,
+	FolderPlus,
+	PenBox,
+	Pencil,
+	Settings,
+	Trash2,
+} from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import toast from "react-hot-toast"
@@ -25,7 +33,8 @@ export function Sidebar() {
 	const [groupIsOpen, setGroupIsOpen] = useState(false)
 	const [adsIsOpen, setAdsIsOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
-	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 	const { selectedItems, deleteSelectedItems } = useSearchContext()
 	const { isAuth, exit } = useAuth()
 	const { push } = useRouter()
@@ -43,7 +52,7 @@ export function Sidebar() {
 
 	const handleDelete = () => {
 		deleteSelectedItems()
-		setIsModalOpen(false)
+		setIsDeleteModalOpen(false)
 	}
 
 	return (
@@ -102,7 +111,7 @@ export function Sidebar() {
 											? "opacity-50 cursor-not-allowed"
 											: "cursor-pointer",
 										selectedItems.length <= 0
-											? " opacity-50 cursor-not-allowed"
+											? "opacity-50 cursor-not-allowed"
 											: ""
 									)}
 								>
@@ -110,7 +119,7 @@ export function Sidebar() {
 								</button>
 							)}
 							<button
-								onClick={() => setIsModalOpen(true)}
+								onClick={() => setIsDeleteModalOpen(true)}
 								disabled={selectedItems.length <= 0}
 								className={cn(
 									selectedItems.length <= 0
@@ -127,11 +136,25 @@ export function Sidebar() {
 							</button>
 						</div>
 					</div>
-					<div>
+
+					{/* Блок настроек и выхода */}
+					<div className='flex flex-col items-center gap-y-5'>
+						{/* Настройки */}
+						<SettingsModal
+							isOpen={isSettingsOpen}
+							onClose={() => setIsSettingsOpen(false)}
+						/>
+						<button onClick={() => setIsSettingsOpen(true)}>
+							<Settings size={27} className={styles.icon} />
+						</button>
+
+						{/* Выход */}
 						<button onClick={() => mutateLogout()}>
 							<TbLogout2 size={27} className={styles.icon} />
 						</button>
 					</div>
+
+					{/* Модалки */}
 					{pathname === "/campaings" && (
 						<EditCamping
 							isOpen={isEditing}
@@ -150,7 +173,8 @@ export function Sidebar() {
 							onClose={() => setIsEditing(!isEditing)}
 						/>
 					)}
-					{isModalOpen && (
+
+					{isDeleteModalOpen && (
 						<div className={styles.modal}>
 							<div className={styles.modal_container}>
 								<h2 className={styles.modal_title}>Подтверждение удаления</h2>
@@ -166,7 +190,7 @@ export function Sidebar() {
 									</button>
 									<button
 										className={styles.button_cancel}
-										onClick={() => setIsModalOpen(false)}
+										onClick={() => setIsDeleteModalOpen(false)}
 									>
 										Отмена
 									</button>

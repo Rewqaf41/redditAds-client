@@ -137,7 +137,7 @@ export function AuthForm({ isLogin }: AuthFormProps) {
 					/>
 				</label>
 				<p className='text-red-500 text-sm min-h-[20px] mt-1'>
-					{errors.password?.message} // Показываем ошибку пароля
+					{errors.password?.message}
 				</p>
 			</div>
 

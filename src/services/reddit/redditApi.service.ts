@@ -132,7 +132,6 @@ function safeParseRaw(raw: string): IRawAccountData | undefined {
   try {
     return JSON.parse(raw) as IRawAccountData; // Пробуем распарсить данные
   } catch (error) {
-    console.error("Error parsing raw account data:", error); // Логируем ошибку
     return undefined; // Возвращаем undefined в случае ошибки
   }
 }

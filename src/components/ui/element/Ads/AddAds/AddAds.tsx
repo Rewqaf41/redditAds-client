@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/common/Select"
 import { adsStore } from "@/store/ads/ads.store"
 import { groupStore } from "@/store/group/group.store"
+import { llmStore } from "@/store/llm/llm.store"
 import { IAdData } from "@/types/reddit/redditApi.types"
+import axios from "axios"
 import { useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -33,8 +35,13 @@ interface ICallAction {
 
 export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 	const [showWindow, setShowWindow] = useState(false)
+	const [isGenerating, setIsGenerating] = useState(false)
+	const [animatedHeadline, setAnimatedHeadline] = useState("Загрузка")
+	const [headlineInterval, setHeadlineInterval] =
+		useState<NodeJS.Timeout | null>(null)
 
 	const { items: groups } = groupStore()
+	const { baseUrl, model } = llmStore()
 
 	const { addItem } = adsStore()
 
@@ -71,6 +78,48 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 		reset()
 	}
 
+	const handleImageUpload = async (file: File) => {
+		const formData = new FormData()
+		formData.append("file", file)
+		formData.append("model", model)
+		formData.append("baseUrl", baseUrl)
+
+		setIsGenerating(true)
+
+		try {
+			const res = await axios.post("/api/chat", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+
+			reset((prev) => ({
+				...prev,
+				headline: res.data.headline || "Ошибка! Добавьте заголовок вручную",
+			}))
+		} catch (error) {
+			toast.error("Ошибка генерации заголовка")
+		} finally {
+			setIsGenerating(false)
+		}
+	}
+
+	useEffect(() => {
+		if (isGenerating) {
+			let dots = 0
+			const interval = setInterval(() => {
+				dots = (dots + 1) % 4
+				setAnimatedHeadline("Загрузка" + ".".repeat(dots))
+			}, 500)
+			setHeadlineInterval(interval)
+		} else if (headlineInterval) {
+			clearInterval(headlineInterval)
+		}
+		return () => {
+			if (headlineInterval) clearInterval(headlineInterval)
+		}
+	}, [headlineInterval, isGenerating])
+
 	useEffect(() => {
 		if (isOpen) {
 			setTimeout(() => {
@@ -80,8 +129,6 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 			setShowWindow(false)
 		}
 	}, [isOpen])
-
-	const destinationUrl = watch("destination_url", "")
 
 	return showWindow ? (
 		<div className={styles.modal}>
@@ -132,6 +179,16 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 						<div className='bg-[#151f31] p-5 m-4 rounded-md'>
 							<div className='mb-3'>Создание поста</div>
 							<div className='flex gap-x-2 mt-3'>
+								<label className='opacity-70 text-sm'>Изображение *</label>
+								<InfoBadge side='top'>
+									Отображается в лентах, настроенных на просмотр карточек
+									(настройка просмотра ленты по умолчанию). Рекомендуемые
+									соотношения сторон: 1:1, 4:5, 4:3, 16:9 JPG, PNG или GIF макс.
+									3 МБ
+								</InfoBadge>
+							</div>
+							<DragAndDropForm onFileUploaded={handleImageUpload} />
+							<div className='flex gap-x-2 mt-3'>
 								<label className='opacity-70 text-sm'>Заголовок*</label>
 								<InfoBadge side='top'>
 									Используйте правильную грамматику, орфографию и пунктуацию.
@@ -142,17 +199,9 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 								className='w-full bg-transparent border border-neutral-700 max-h-52 min-h-32 p-2 rounded-md placeholder:text-white/70'
 								placeholder='Напишите убедительный заголовок'
 								{...register("headline", { required: false })}
-							></textarea>
-							<div className='flex gap-x-2 mt-3'>
-								<label className='opacity-70 text-sm'>Изображение *</label>
-								<InfoBadge side='top'>
-									Отображается в лентах, настроенных на просмотр карточек
-									(настройка просмотра ленты по умолчанию). Рекомендуемые
-									соотношения сторон: 1:1, 4:5, 4:3, 16:9 JPG, PNG или GIF макс.
-									3 МБ
-								</InfoBadge>
-							</div>
-							<DragAndDropForm />
+								value={isGenerating ? animatedHeadline : watch("headline")}
+								readOnly={isGenerating}
+							/>
 							<div className='flex gap-x-2 mt-6'>
 								<label className='opacity-70 text-sm'>
 									URL-адрес назначения *

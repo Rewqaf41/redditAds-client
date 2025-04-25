@@ -84,7 +84,6 @@ class AuthService {
 
 			return response
 		} catch (error) {
-			console.error('Logout error:', error)
 			removeFromStorage()
 			return { data: true } // Возвращает успешный ответ даже при ошибке, чтобы UI мог продолжить
 		}

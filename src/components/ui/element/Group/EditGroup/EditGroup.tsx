@@ -97,7 +97,6 @@ export function EditGroup({ isOpen, onClose }: WindowComponentProps) {
 
 	const handleGenderSelect = (gender: string | null) => {
 		setSelectedGender(gender)
-		console.log(selectedGender)
 		setValue("gender", gender, { shouldDirty: true })
 	}
 

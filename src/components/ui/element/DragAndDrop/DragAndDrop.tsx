@@ -3,18 +3,36 @@ import Image from "next/image"
 import { useCallback, useState } from "react"
 import { DropzoneOptions, FileWithPath, useDropzone } from "react-dropzone"
 
-const DragAndDropForm: React.FC = () => {
+interface DragAndDropFormProps {
+	onFileUploaded?: (file: File) => void
+}
+
+const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
+	onFileUploaded,
+}) => {
 	const [files, setFiles] = useState<FileWithPath[]>([])
 
-	const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
-		const validFiles = acceptedFiles.filter((file) => {
-			const isImage = file.type.startsWith("image/")
-			const isSizeValid = file.size <= 3 * 1024 * 1024
-			return isImage && isSizeValid
-		})
+	const onDrop = useCallback(
+		(acceptedFiles: FileWithPath[]) => {
+			const validFiles = acceptedFiles.filter((file) => {
+				const isImage = file.type.startsWith("image/")
+				const isSizeValid = file.size <= 3 * 1024 * 1024
+				return isImage && isSizeValid
+			})
 
-		setFiles((prevFiles) => [...prevFiles, ...validFiles])
-	}, [])
+			setFiles((prevFiles) => [...prevFiles, ...validFiles])
+
+			if (validFiles.length > 0 && onFileUploaded) {
+				const confirmed = window.confirm(
+					"Сгенерировать заголовок по изображению?(Beta)"
+				)
+				if (confirmed) {
+					onFileUploaded(validFiles[0])
+				}
+			}
+		},
+		[onFileUploaded]
+	)
 
 	const handleRemoveFile = (file: FileWithPath) => {
 		setFiles((prevFiles) => prevFiles.filter((f) => f !== file))
@@ -35,7 +53,7 @@ const DragAndDropForm: React.FC = () => {
 				{files.length === 0 && !isDragActive && (
 					<p className='text-center mt-2'>
 						Перетащите файл сюда или
-						<span className='text-blue-500 underline'>выберите</span>
+						<span className='text-blue-500 underline ml-1'>выберите</span>
 					</p>
 				)}
 				{isDragActive && files.length === 0 && (
@@ -49,6 +67,8 @@ const DragAndDropForm: React.FC = () => {
 							<Image
 								src={URL.createObjectURL(file)}
 								alt={file.name}
+								width={64}
+								height={64}
 								className='w-16 h-16 object-cover mr-2 rounded-md'
 							/>
 							<span className='flex-1'>{file.name}</span>
