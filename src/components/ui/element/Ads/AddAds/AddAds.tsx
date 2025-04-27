@@ -13,7 +13,7 @@ import { groupStore } from "@/store/group/group.store"
 import { llmStore } from "@/store/llm/llm.store"
 import { IAdData } from "@/types/reddit/redditApi.types"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { IoMdClose } from "react-icons/io"
@@ -104,6 +104,8 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 		}
 	}
 
+	const headlineIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
 	useEffect(() => {
 		if (isGenerating) {
 			let dots = 0
@@ -111,14 +113,18 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 				dots = (dots + 1) % 4
 				setAnimatedHeadline("Загрузка" + ".".repeat(dots))
 			}, 500)
-			setHeadlineInterval(interval)
-		} else if (headlineInterval) {
-			clearInterval(headlineInterval)
+			headlineIntervalRef.current = interval
+		} else {
+			if (headlineIntervalRef.current) {
+				clearInterval(headlineIntervalRef.current)
+			}
 		}
 		return () => {
-			if (headlineInterval) clearInterval(headlineInterval)
+			if (headlineIntervalRef.current) {
+				clearInterval(headlineIntervalRef.current)
+			}
 		}
-	}, [headlineInterval, isGenerating])
+	}, [isGenerating])
 
 	useEffect(() => {
 		if (isOpen) {
