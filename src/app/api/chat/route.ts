@@ -54,16 +54,16 @@ export async function POST(req: NextRequest) {
 		})
 
 		const content = chatCompletion.choices[0].message.content
-		const match = content?.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
+		// const match = content?.match(/```(?:json)?\s*([\s\S]*?)\s*```/i)
 
-		if (!match) {
-			return NextResponse.json(
-				{ error: 'Не удалось распарсить ответ модели' },
-				{ status: 500 }
-			)
-		}
+		// if (!match) {
+		// 	return NextResponse.json(
+		// 		{ error: 'Не удалось распарсить ответ модели' },
+		// 		{ status: 500 }
+		// 	)
+		// }
 
-		const json = JSON.parse(match[1])
+		const json = JSON.parse(content as string)
 		return NextResponse.json(json)
 	} catch (error) {
 		return NextResponse.json({ error: 'Ошибка при обращении к LM Studio' }, { status: 500 })
