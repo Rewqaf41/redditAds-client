@@ -8,6 +8,7 @@ import styles from "../Group.module.scss"
 
 import { Checkbox } from "@/components/ui/common/Checkbox"
 import { Label } from "@/components/ui/common/Label"
+import { Modal } from "@/components/ui/common/Modal"
 import { MultiSelect } from "@/components/ui/common/MultiSelect"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/common/RadioGroup"
 import {
@@ -19,11 +20,15 @@ import {
 } from "@/components/ui/common/Select"
 import { campaingsStore } from "@/store/campaing/campaings.store"
 import { groupStore } from "@/store/group/group.store"
+import { llmStore } from "@/store/llm/llm.store"
 import { Group } from "@/store/types"
+import axios from "axios"
+import { Sparkles } from "lucide-react"
 import toast from "react-hot-toast"
 import { InfoBadge } from "../../Badges/InfoBadge"
 import { Button } from "../../Button/Button"
 import { CalendarForm } from "../../CalendarFrom/CalendarFrom"
+import { DragAndDropForm } from "../../DragAndDrop/DragAndDrop"
 import Field from "../../Field/Field"
 import carriersData from "../carriers.data.json"
 import devicesData from "../device.data.json"
@@ -35,6 +40,7 @@ interface WindowComponentProps {
 
 export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 	const [showWindow, setShowWindow] = useState(false)
+	const [isAIModalOpen, setIsAIModalOpen] = useState(false)
 	const [selectedGender, setSelectedGender] = useState<string | null>()
 	const [selectedDevis, setSelectedDevis] = useState<string | null>()
 
@@ -42,8 +48,8 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 	const [isAndroid, setIsAndroid] = useState(false)
 
 	const { items: campaings } = campaingsStore()
-
 	const { addItem } = groupStore()
+	const { baseUrl, model } = llmStore()
 
 	const {
 		handleSubmit,
@@ -100,6 +106,81 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 		setValue("devices", device ?? null, { shouldDirty: true })
 	}
 
+	const handleFileUpload = async (file: File) => {
+		try {
+			const formData = new FormData()
+			formData.append("file", file)
+			formData.append("baseUrl", baseUrl)
+			formData.append("model", model)
+
+			const response = await axios.post("/api/group", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+
+			const {
+				name,
+				keywords,
+				communities,
+				interests,
+				geolocations,
+				excluded_geolocations,
+				excluded_communities,
+				excluded_keywords,
+				goal_value,
+			} = response.data
+
+			if (name) setValue("name", name, { shouldValidate: true })
+
+			if (keywords) setValue("keywords", keywords, { shouldValidate: true })
+
+			if (communities)
+				setValue("communities", communities, { shouldValidate: true })
+
+			if (interests) setValue("interests", interests, { shouldValidate: true })
+
+			if (geolocations)
+				setValue("geolocations", geolocations, { shouldValidate: true })
+
+			if (excluded_geolocations)
+				setValue("excluded_geolocations", excluded_geolocations, {
+					shouldValidate: true,
+				})
+			if (excluded_communities)
+				setValue("excluded_communities", excluded_communities, {
+					shouldValidate: true,
+				})
+			if (excluded_keywords)
+				setValue("excluded_keywords", excluded_keywords, {
+					shouldValidate: true,
+				})
+			if (goal_value)
+				setValue("goal_value", goal_value, { shouldValidate: true })
+
+			if (
+				name ||
+				keywords ||
+				communities ||
+				interests ||
+				geolocations ||
+				excluded_geolocations ||
+				excluded_communities ||
+				excluded_keywords ||
+				goal_value
+			) {
+				toast.success("Данные успешно сгенерированы!")
+			} else {
+				toast.error("Ошибка генерации данных")
+			}
+
+			setIsAIModalOpen(false)
+		} catch (error) {
+			console.error(error)
+			toast.error("Ошибка при отправке файла")
+		}
+	}
+
 	return showWindow ? (
 		<div className={styles.modal}>
 			<div className={styles.modal_container}>
@@ -112,7 +193,16 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 				<div className={styles.modal_content}>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className='bg-[#151f31] p-5 m-4 rounded-md'>
-							<div className='mb-3'>Кампании</div>
+							<div className='flex justify-between'>
+								<div className='mb-3'>Кампании</div>
+								<button
+									className='flex text-right text-purple-400 mb-2 hover:text-purple-300'
+									onClick={() => setIsAIModalOpen(true)}
+								>
+									<Sparkles size={16} />
+									AI
+								</button>
+							</div>
 							<Controller
 								name='campaings'
 								control={control}
@@ -552,6 +642,13 @@ export function AddGroup({ isOpen, onClose }: WindowComponentProps) {
 							</div>
 						</div>
 					</form>
+					<Modal
+						isOpen={isAIModalOpen}
+						onClose={() => setIsAIModalOpen(false)}
+						title='Генерация данных по изображению'
+					>
+						<DragAndDropForm onFileUploaded={handleFileUpload} />
+					</Modal>
 				</div>
 			</div>
 		</div>

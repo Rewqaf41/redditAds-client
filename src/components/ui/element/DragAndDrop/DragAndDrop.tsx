@@ -1,16 +1,26 @@
 import { Trash } from "lucide-react"
 import Image from "next/image"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { DropzoneOptions, FileWithPath, useDropzone } from "react-dropzone"
 
 interface DragAndDropFormProps {
 	onFileUploaded?: (file: File) => void
+	selectedFile?: File
 }
 
-const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
+export const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
 	onFileUploaded,
+	selectedFile,
 }) => {
-	const [files, setFiles] = useState<FileWithPath[]>([])
+	const [files, setFiles] = useState<FileWithPath[]>(
+		selectedFile ? [selectedFile as FileWithPath] : []
+	)
+
+	useEffect(() => {
+		if (selectedFile) {
+			setFiles([selectedFile as FileWithPath])
+		}
+	}, [selectedFile])
 
 	const onDrop = useCallback(
 		(acceptedFiles: FileWithPath[]) => {
@@ -20,22 +30,22 @@ const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
 				return isImage && isSizeValid
 			})
 
-			setFiles((prevFiles) => [...prevFiles, ...validFiles])
-
-			if (validFiles.length > 0 && onFileUploaded) {
-				const confirmed = window.confirm(
-					"Сгенерировать заголовок по изображению?(Beta)"
-				)
-				if (confirmed) {
-					onFileUploaded(validFiles[0])
+			if (validFiles.length > 0) {
+				setFiles([validFiles[0]]) // заменяет старое изображение
+				if (onFileUploaded) {
+					const confirmed = window.confirm(
+						"Сгенерировать заголовок по изображению? (Beta)"
+					)
+					if (confirmed) onFileUploaded(validFiles[0])
 				}
 			}
 		},
 		[onFileUploaded]
 	)
 
-	const handleRemoveFile = (file: FileWithPath) => {
-		setFiles((prevFiles) => prevFiles.filter((f) => f !== file))
+	const handleRemoveFile = () => {
+		setFiles([])
+		if (onFileUploaded) onFileUploaded(null as any)
 	}
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -60,10 +70,10 @@ const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
 					<p className='text-center mt-2'>Перетащите файл сюда...</p>
 				)}
 			</div>
-			{files ? (
+			{files.length > 0 && (
 				<ul className='mt-4'>
 					{files.map((file) => (
-						<li key={file.path} className='flex items-center mb-2'>
+						<li key={file.name} className='flex items-center mb-2'>
 							<Image
 								src={URL.createObjectURL(file)}
 								alt={file.name}
@@ -74,7 +84,7 @@ const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
 							<span className='flex-1'>{file.name}</span>
 							<button
 								type='button'
-								onClick={() => handleRemoveFile(file)}
+								onClick={() => handleRemoveFile()}
 								className='text-red-500 hover:text-red-700'
 							>
 								<Trash />
@@ -82,9 +92,7 @@ const DragAndDropForm: React.FC<DragAndDropFormProps> = ({
 						</li>
 					))}
 				</ul>
-			) : null}
+			)}
 		</div>
 	)
 }
-
-export default DragAndDropForm

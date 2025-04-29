@@ -1,15 +1,8 @@
 "use client"
 
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/common/Select"
 import { llmStore } from "@/store/llm/llm.store"
 import { useEffect, useState } from "react"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { IoMdClose } from "react-icons/io"
 import Field from "../Field/Field"
@@ -76,21 +69,10 @@ export function SettingsModal({ isOpen, onClose }: ModelSettingsProps) {
 
 					<div className='bg-[#151f31] p-5 m-4 rounded-md'>
 						<div className='mb-3'>Название модели*</div>
-						<Controller
-							name='name'
-							control={control}
-							rules={{ required: true }}
-							render={({ field }) => (
-								<Select onValueChange={field.onChange} value={field.value}>
-									<SelectTrigger className='w-full p-5 text-md'>
-										<SelectValue placeholder='Выберите модель' />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value='gemma-3-4b-it'>gemma-3-4b-it</SelectItem>
-										<SelectItem value='llava-v1.5-7b'>llava-v1.5-7b</SelectItem>
-									</SelectContent>
-								</Select>
-							)}
+						<Field
+							className='border border-neutral-700 p-2 rounded-md'
+							placeholder='llava-v1.5-7b'
+							{...register("name", { required: true })}
 						/>
 					</div>
 

@@ -1,5 +1,6 @@
 "use client"
 import { Checkbox } from "@/components/ui/common/Checkbox"
+import { Modal } from "@/components/ui/common/Modal"
 import { MultiSelect } from "@/components/ui/common/MultiSelect"
 import {
 	Select,
@@ -13,12 +14,13 @@ import { groupStore } from "@/store/group/group.store"
 import { llmStore } from "@/store/llm/llm.store"
 import { IAdData } from "@/types/reddit/redditApi.types"
 import axios from "axios"
+import { Sparkles } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { IoMdClose } from "react-icons/io"
 import { InfoBadge } from "../../Badges/InfoBadge"
-import DragAndDropForm from "../../DragAndDrop/DragAndDrop"
+import { DragAndDropForm } from "../../DragAndDrop/DragAndDrop"
 import Field from "../../Field/Field"
 import styles from "../Ads.module.scss"
 import data from "../callAction.data.json"
@@ -35,10 +37,13 @@ interface ICallAction {
 
 export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 	const [showWindow, setShowWindow] = useState(false)
+	const [isAIModalOpen, setIsAIModalOpen] = useState(false)
 	const [isGenerating, setIsGenerating] = useState(false)
 	const [animatedHeadline, setAnimatedHeadline] = useState("Загрузка")
 	const [headlineInterval, setHeadlineInterval] =
 		useState<NodeJS.Timeout | null>(null)
+
+	const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
 	const { items: groups } = groupStore()
 	const { baseUrl, model } = llmStore()
@@ -52,6 +57,7 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 		watch,
 		reset,
 		formState: { isValid },
+		setValue,
 	} = useForm<IAdData>({
 		mode: "onChange",
 	})
@@ -78,29 +84,39 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 		reset()
 	}
 
-	const handleImageUpload = async (file: File) => {
-		const formData = new FormData()
-		formData.append("file", file)
-		formData.append("model", model)
-		formData.append("baseUrl", baseUrl)
-
-		setIsGenerating(true)
-
+	const handleFileUpload = async (file: File) => {
+		setSelectedFile(file)
 		try {
-			const res = await axios.post("/api/chat", formData, {
+			const formData = new FormData()
+			formData.append("file", file)
+			formData.append("baseUrl", baseUrl)
+			formData.append("model", model)
+
+			const response = await axios.post("/api/ads", formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
 			})
 
-			reset((prev) => ({
-				...prev,
-				headline: res.data.headline || "Ошибка! Добавьте заголовок вручную",
-			}))
+			const { name, headline } = response.data
+
+			if (name) {
+				setValue("name", name, { shouldValidate: true })
+			}
+			if (headline) {
+				setValue("headline", headline, { shouldValidate: true })
+			}
+
+			if (name || headline) {
+				toast.success("Данные успешно сгенерированы!")
+			} else {
+				toast.error("Ошибка генерации данных")
+			}
+
+			setIsAIModalOpen(false)
 		} catch (error) {
-			toast.error("Ошибка генерации заголовка")
-		} finally {
-			setIsGenerating(false)
+			console.error(error)
+			toast.error("Ошибка при отправке файла")
 		}
 	}
 
@@ -148,7 +164,16 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 				<div className={styles.modal_content}>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className='bg-[#151f31] p-5 m-4 rounded-md'>
-							<div className='mb-3'>Группы</div>
+							<div className='flex justify-between'>
+								<div className='mb-3'>Группы</div>
+								<button
+									className='flex text-right text-purple-400 mb-2 hover:text-purple-300'
+									onClick={() => setIsAIModalOpen(true)}
+								>
+									<Sparkles size={16} />
+									AI
+								</button>
+							</div>
 							<Controller
 								name='groups'
 								control={control}
@@ -193,7 +218,7 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 									3 МБ
 								</InfoBadge>
 							</div>
-							<DragAndDropForm onFileUploaded={handleImageUpload} />
+							<DragAndDropForm selectedFile={selectedFile!} />
 							<div className='flex gap-x-2 mt-3'>
 								<label className='opacity-70 text-sm'>Заголовок*</label>
 								<InfoBadge side='top'>
@@ -295,6 +320,19 @@ export function AddAds({ isOpen, onClose }: WindowComponentProps) {
 							</div>
 						</div>
 					</form>
+					<Modal
+						isOpen={isAIModalOpen}
+						onClose={() => setIsAIModalOpen(false)}
+						title='Генерация данных по изображению'
+					>
+						<DragAndDropForm
+							selectedFile={selectedFile!}
+							onFileUploaded={(file) => {
+								setSelectedFile(file)
+								handleFileUpload(file)
+							}}
+						/>
+					</Modal>
 				</div>
 			</div>
 		</div>
