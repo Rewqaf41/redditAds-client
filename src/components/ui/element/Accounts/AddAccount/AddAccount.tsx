@@ -78,19 +78,23 @@ const AddAccount: FC<WindowComponentProps> = ({ isOpen, onClose }) => {
 					`${faker.commerce.productMaterial()} ${campaignName}`,
 				]
 
-				const splitMetric = (value: string) => {
+				const splitMetric = (value: string, roundToInt = false) => {
 					const num = parseFloat(value)
 					const factors = [Math.random(), Math.random()]
 					const sumFactors = factors.reduce((a, b) => a + b, 0)
 
-					return factors.map((factor) =>
-						((factor / sumFactors) * num).toFixed(2)
-					)
+					return factors.map((factor) => {
+						const val = (factor / sumFactors) * num
+						return roundToInt ? Math.round(val).toString() : val.toFixed(2)
+					})
 				}
 
-				const [impressionsA, impressionsB] = splitMetric(metrics.impressions)
+				const [impressionsA, impressionsB] = splitMetric(
+					metrics.impressions,
+					true
+				)
 				const [spendA, spendB] = splitMetric(metrics.spend)
-				const [clicksA, clicksB] = splitMetric(metrics.clicks)
+				const [clicksA, clicksB] = splitMetric(metrics.clicks, true)
 				const [ecpmA, ecpmB] = splitMetric(metrics.ecpm)
 				const [cpcA, cpcB] = splitMetric(metrics.cpc)
 				const [ctrA, ctrB] = splitMetric(metrics.ctr)
